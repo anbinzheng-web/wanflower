@@ -1,0 +1,29 @@
+{
+  "name": "backend-api",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "vite build",
+    "openapi": "pnpx tsx openapi.ts && pnpm build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.1",
+  "dependencies": {
+    "swagger-typescript-api": "13.2.2",
+    "vite": "^2.9.18",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}

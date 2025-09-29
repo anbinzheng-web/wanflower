@@ -1,0 +1,17 @@
+{
+  "name": "wanflower",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:server": "pnpm -F server start:dev",
+    "dev": "pnpm -F wanflower.com dev",
+    "admin:dev": "pnpm -F admin dev",
+    "react-markdown:dev": "pnpm -F react-markdown dev",
+    "openapi": "pnpm -F backend-api openapi"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.1"
+}

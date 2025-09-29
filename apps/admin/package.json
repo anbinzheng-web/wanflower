@@ -1,0 +1,82 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "WanFlower Admin",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode development",
+    "preview": "vite preview",
+    "build": "vite build",
+    "openapi": "pnpx tsx ./scripts/openapi.ts"
+  },
+  "dependencies": {
+    "@ant-design/icons": "~5.6.1",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@antv/data-set": "^0.11.8",
+    "@loadable/component": "^5.16.7",
+    "@turf/turf": "^6.5.0",
+    "ahooks": "^3.9.5",
+    "antd": "^5.27.4",
+    "axios": "^0.24.0",
+    "bizcharts": "^4.1.23",
+    "classnames": "^2.5.1",
+    "copy-to-clipboard": "^3.3.3",
+    "nprogress": "^0.2.0",
+    "query-string": "^6.14.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "backend-api": "workspace:*",
+    "react-markdown": "workspace:*",
+    "react-router": "^5.3.4",
+    "react-router-dom": "^5.3.4",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@arco-design/webpack-plugin": "^1.7.0",
+    "@arco-plugins/vite-plugin-svgr": "^0.7.2",
+    "@svgr/webpack": "^5.5.0",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^5.0.3",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.2",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-prettier": "^4.2.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "less": "^4.4.1",
+    "less-loader": "7.3.0",
+    "postcss-less": "^4.0.1",
+    "prettier": "^2.8.8",
+    "pretty-quick": "^3.3.1",
+    "stylelint": "^14.16.1",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-standard": "^24.0.0",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^4.9.5",
+    "vite": "^7.1.7"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix --cache"
+    ],
+    "*.{css, less}": [
+      "stylelint --fix"
+    ]
+  }
+}
