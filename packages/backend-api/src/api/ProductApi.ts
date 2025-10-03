@@ -11,19 +11,38 @@
  */
 
 import {
-  ByIdDto,
-  ProductControllerCreateData,
-  ProductControllerDeleteData,
-  ProductControllerDeleteImageData,
-  ProductControllerDetailData,
-  ProductControllerListData,
-  ProductControllerListParams,
-  ProductControllerUpdateData,
-  ProductControllerUploadData,
-  ProductControllerViewsData,
+  CategoryCreateDto,
+  CategoryUpdateDto,
+  ProductBatchDeleteDto,
+  ProductBatchUpdateStatusDto,
+  ProductControllerBatchDeleteProductsData,
+  ProductControllerBatchMigrateProductMediaToCdnData,
+  ProductControllerBatchUpdateProductStatusData,
+  ProductControllerBatchUploadProductMediaData,
+  ProductControllerCreateCategoryData,
+  ProductControllerCreateProductData,
+  ProductControllerDeleteCategoryData,
+  ProductControllerDeleteProductData,
+  ProductControllerDeleteProductMediaData,
+  ProductControllerGetCategoryListData,
+  ProductControllerGetCategoryListParams,
+  ProductControllerGetProductDetailData,
+  ProductControllerGetProductListData,
+  ProductControllerGetProductListParams,
+  ProductControllerGetProductMediaData,
+  ProductControllerIncrementProductViewData,
+  ProductControllerMigrateMediaToCdnData,
+  ProductControllerUpdateCategoryData,
+  ProductControllerUpdateProductData,
+  ProductControllerUpdateProductMediaData,
+  ProductControllerUploadProductMediaData,
   ProductCreateDto,
-  ProductImageUploadDto,
+  ProductMediaDeleteDto,
+  ProductMediaMigrateToCdnDto,
+  ProductMediaUpdateDto,
+  ProductMediaUploadDto,
   ProductUpdateDto,
+  ProductViewDto,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
@@ -35,19 +54,20 @@ export class ProductApi<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
+   * @description 支持筛选、排序、分页的产品列表
    *
    * @tags product
-   * @name ProductControllerList
-   * @request GET:/product/list
-   * @response `200` `ProductControllerListData`
+   * @name ProductControllerGetProductList
+   * @summary 获取产品列表
+   * @request GET:/api/product/list
+   * @response `200` `ProductControllerGetProductListData` 获取成功
    */
-  productControllerList = (
-    query: ProductControllerListParams,
+  productControllerGetProductList = (
+    query: ProductControllerGetProductListParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<ProductControllerListData, any>({
-      path: `/product/list`,
+    this.http.request<ProductControllerGetProductListData, any>({
+      path: `/api/product/list`,
       method: "GET",
       query: query,
       ...params,
@@ -56,14 +76,37 @@ export class ProductApi<SecurityDataType = unknown> {
    * No description
    *
    * @tags product
-   * @name ProductControllerDetail
-   * @request GET:/product/detail
-   * @response `200` `ProductControllerDetailData`
+   * @name ProductControllerGetProductDetail
+   * @summary 获取产品详情
+   * @request GET:/api/product/detail/{id}
+   * @response `200` `ProductControllerGetProductDetailData` 获取成功
+   * @response `404` `void` 产品不存在
    */
-  productControllerDetail = (data: ByIdDto, params: RequestParams = {}) =>
-    this.http.request<ProductControllerDetailData, any>({
-      path: `/product/detail`,
+  productControllerGetProductDetail = (
+    id: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetProductDetailData, void>({
+      path: `/api/product/detail/${id}`,
       method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags product
+   * @name ProductControllerIncrementProductView
+   * @summary 增加产品浏览量
+   * @request POST:/api/product/view
+   * @response `200` `ProductControllerIncrementProductViewData` 操作成功
+   */
+  productControllerIncrementProductView = (
+    data: ProductViewDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerIncrementProductViewData, any>({
+      path: `/api/product/view`,
+      method: "POST",
       body: data,
       type: ContentType.Json,
       ...params,
@@ -72,103 +115,357 @@ export class ProductApi<SecurityDataType = unknown> {
    * No description
    *
    * @tags product
-   * @name ProductControllerCreate
-   * @request POST:/product/create
-   * @response `201` `ProductControllerCreateData`
+   * @name ProductControllerGetProductMedia
+   * @summary 获取产品媒体文件
+   * @request GET:/api/product/media/{productId}
+   * @response `200` `ProductControllerGetProductMediaData` 获取成功
    */
-  productControllerCreate = (
+  productControllerGetProductMedia = (
+    productId: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetProductMediaData, any>({
+      path: `/api/product/media/${productId}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerCreateProduct
+   * @summary 创建产品
+   * @request POST:/api/product/create
+   * @secure
+   * @response `201` `ProductControllerCreateProductData` 创建成功
+   * @response `400` `void` 参数错误
+   * @response `403` `void` 权限不足
+   */
+  productControllerCreateProduct = (
     data: ProductCreateDto,
     params: RequestParams = {},
   ) =>
-    this.http.request<ProductControllerCreateData, any>({
-      path: `/product/create`,
+    this.http.request<ProductControllerCreateProductData, void>({
+      path: `/api/product/create`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
       ...params,
     });
   /**
-   * No description
+   * @description 需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerUpdate
-   * @request POST:/product/update
-   * @response `201` `ProductControllerUpdateData`
+   * @name ProductControllerUpdateProduct
+   * @summary 更新产品
+   * @request PUT:/api/product/update
+   * @secure
+   * @response `200` `ProductControllerUpdateProductData` 更新成功
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 产品不存在
    */
-  productControllerUpdate = (
+  productControllerUpdateProduct = (
     data: ProductUpdateDto,
     params: RequestParams = {},
   ) =>
-    this.http.request<ProductControllerUpdateData, any>({
-      path: `/product/update`,
-      method: "POST",
+    this.http.request<ProductControllerUpdateProductData, void>({
+      path: `/api/product/update`,
+      method: "PUT",
       body: data,
+      secure: true,
       type: ContentType.Json,
       ...params,
     });
   /**
-   * No description
+   * @description 软删除，需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerDelete
-   * @request POST:/product/delete
-   * @response `201` `ProductControllerDeleteData`
+   * @name ProductControllerDeleteProduct
+   * @summary 删除产品
+   * @request DELETE:/api/product/delete/{id}
+   * @secure
+   * @response `200` `ProductControllerDeleteProductData` 删除成功
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 产品不存在
    */
-  productControllerDelete = (data: ByIdDto, params: RequestParams = {}) =>
-    this.http.request<ProductControllerDeleteData, any>({
-      path: `/product/delete`,
-      method: "POST",
-      body: data,
-      type: ContentType.Json,
+  productControllerDeleteProduct = (id: number, params: RequestParams = {}) =>
+    this.http.request<ProductControllerDeleteProductData, void>({
+      path: `/api/product/delete/${id}`,
+      method: "DELETE",
+      secure: true,
       ...params,
     });
   /**
-   * No description
+   * @description 需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerUpload
-   * @request POST:/product/upload_image
-   * @response `201` `ProductControllerUploadData`
+   * @name ProductControllerBatchDeleteProducts
+   * @summary 批量删除产品
+   * @request POST:/api/product/batch-delete
+   * @secure
+   * @response `200` `ProductControllerBatchDeleteProductsData` 删除成功
+   * @response `403` `void` 权限不足
    */
-  productControllerUpload = (
-    data: ProductImageUploadDto,
+  productControllerBatchDeleteProducts = (
+    data: ProductBatchDeleteDto,
     params: RequestParams = {},
   ) =>
-    this.http.request<ProductControllerUploadData, any>({
-      path: `/product/upload_image`,
+    this.http.request<ProductControllerBatchDeleteProductsData, void>({
+      path: `/api/product/batch-delete`,
       method: "POST",
       body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerBatchUpdateProductStatus
+   * @summary 批量更新产品状态
+   * @request POST:/api/product/batch-update-status
+   * @secure
+   * @response `200` `ProductControllerBatchUpdateProductStatusData` 更新成功
+   * @response `403` `void` 权限不足
+   */
+  productControllerBatchUpdateProductStatus = (
+    data: ProductBatchUpdateStatusDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerBatchUpdateProductStatusData, void>({
+      path: `/api/product/batch-update-status`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 支持图片和视频，需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerUploadProductMedia
+   * @summary 上传产品媒体文件
+   * @request POST:/api/product/media/upload
+   * @secure
+   * @response `201` `ProductControllerUploadProductMediaData` 上传成功
+   * @response `400` `void` 文件格式或大小不符合要求
+   * @response `403` `void` 权限不足
+   */
+  productControllerUploadProductMedia = (
+    data: ProductMediaUploadDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerUploadProductMediaData, void>({
+      path: `/api/product/media/upload`,
+      method: "POST",
+      body: data,
+      secure: true,
       type: ContentType.FormData,
       ...params,
     });
   /**
-   * No description
+   * @description 需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerDeleteImage
-   * @request POST:/product/delete_image/{id}
-   * @response `201` `ProductControllerDeleteImageData`
+   * @name ProductControllerBatchUploadProductMedia
+   * @summary 批量上传产品媒体文件
+   * @request POST:/api/product/media/batch-upload/{productId}
+   * @secure
+   * @response `201` `ProductControllerBatchUploadProductMediaData` 上传成功
+   * @response `403` `void` 权限不足
    */
-  productControllerDeleteImage = (id: string, params: RequestParams = {}) =>
-    this.http.request<ProductControllerDeleteImageData, any>({
-      path: `/product/delete_image/${id}`,
+  productControllerBatchUploadProductMedia = (
+    productId: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerBatchUploadProductMediaData, void>({
+      path: `/api/product/media/batch-upload/${productId}`,
       method: "POST",
+      secure: true,
       ...params,
     });
   /**
-   * @description 商品浏览量+1
+   * @description 需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerViews
-   * @request POST:/product/views
-   * @response `201` `ProductControllerViewsData`
+   * @name ProductControllerUpdateProductMedia
+   * @summary 更新媒体文件信息
+   * @request PUT:/api/product/media/update
+   * @secure
+   * @response `200` `ProductControllerUpdateProductMediaData` 更新成功
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 媒体文件不存在
    */
-  productControllerViews = (data: ByIdDto, params: RequestParams = {}) =>
-    this.http.request<ProductControllerViewsData, any>({
-      path: `/product/views`,
+  productControllerUpdateProductMedia = (
+    data: ProductMediaUpdateDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerUpdateProductMediaData, void>({
+      path: `/api/product/media/update`,
+      method: "PUT",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerDeleteProductMedia
+   * @summary 删除媒体文件
+   * @request DELETE:/api/product/media/delete
+   * @secure
+   * @response `200` `ProductControllerDeleteProductMediaData` 删除成功
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 媒体文件不存在
+   */
+  productControllerDeleteProductMedia = (
+    data: ProductMediaDeleteDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerDeleteProductMediaData, void>({
+      path: `/api/product/media/delete`,
+      method: "DELETE",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 仅管理员权限
+   *
+   * @tags product
+   * @name ProductControllerMigrateMediaToCdn
+   * @summary 迁移媒体文件到CDN
+   * @request POST:/api/product/media/migrate-to-cdn
+   * @secure
+   * @response `200` `ProductControllerMigrateMediaToCdnData` 迁移成功
+   * @response `403` `void` 权限不足
+   */
+  productControllerMigrateMediaToCdn = (
+    data: ProductMediaMigrateToCdnDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerMigrateMediaToCdnData, void>({
+      path: `/api/product/media/migrate-to-cdn`,
       method: "POST",
       body: data,
+      secure: true,
       type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 仅管理员权限
+   *
+   * @tags product
+   * @name ProductControllerBatchMigrateProductMediaToCdn
+   * @summary 批量迁移产品媒体到CDN
+   * @request POST:/api/product/media/batch-migrate-to-cdn/{productId}
+   * @secure
+   * @response `200` `ProductControllerBatchMigrateProductMediaToCdnData` 迁移完成
+   * @response `403` `void` 权限不足
+   */
+  productControllerBatchMigrateProductMediaToCdn = (
+    productId: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerBatchMigrateProductMediaToCdnData, void>(
+      {
+        path: `/api/product/media/batch-migrate-to-cdn/${productId}`,
+        method: "POST",
+        secure: true,
+        ...params,
+      },
+    );
+  /**
+   * No description
+   *
+   * @tags product
+   * @name ProductControllerGetCategoryList
+   * @summary 获取产品分类列表
+   * @request GET:/api/product/category/list
+   * @response `200` `ProductControllerGetCategoryListData` 获取成功
+   */
+  productControllerGetCategoryList = (
+    query: ProductControllerGetCategoryListParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetCategoryListData, any>({
+      path: `/api/product/category/list`,
+      method: "GET",
+      query: query,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerCreateCategory
+   * @summary 创建产品分类
+   * @request POST:/api/product/category/create
+   * @secure
+   * @response `201` `ProductControllerCreateCategoryData` 创建成功
+   * @response `400` `void` 参数错误
+   * @response `403` `void` 权限不足
+   */
+  productControllerCreateCategory = (
+    data: CategoryCreateDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerCreateCategoryData, void>({
+      path: `/api/product/category/create`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerUpdateCategory
+   * @summary 更新产品分类
+   * @request PUT:/api/product/category/update
+   * @secure
+   * @response `200` `ProductControllerUpdateCategoryData` 更新成功
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 分类不存在
+   */
+  productControllerUpdateCategory = (
+    data: CategoryUpdateDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerUpdateCategoryData, void>({
+      path: `/api/product/category/update`,
+      method: "PUT",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * @description 仅管理员权限，且分类下不能有产品或子分类
+   *
+   * @tags product
+   * @name ProductControllerDeleteCategory
+   * @summary 删除产品分类
+   * @request DELETE:/api/product/category/delete/{id}
+   * @secure
+   * @response `200` `ProductControllerDeleteCategoryData` 删除成功
+   * @response `400` `void` 分类下有产品或子分类，无法删除
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 分类不存在
+   */
+  productControllerDeleteCategory = (id: number, params: RequestParams = {}) =>
+    this.http.request<ProductControllerDeleteCategoryData, void>({
+      path: `/api/product/category/delete/${id}`,
+      method: "DELETE",
+      secure: true,
       ...params,
     });
 }

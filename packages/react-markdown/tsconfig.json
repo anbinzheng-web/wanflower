@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "baseUrl": ".",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "paths": {},
     "strict": true,
     "sourceMap": false,
@@ -12,6 +12,9 @@
     "skipLibCheck": true,
     "outDir": "dist",
     "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
 
     "jsx": "react-jsx",
     "jsxImportSource": "react"

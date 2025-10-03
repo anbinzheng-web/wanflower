@@ -1,55 +1,29 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Avatar,
-  Dropdown,
-  Menu,
-  Divider,
+  Dropdown, 
   Button,
+  DropdownProps,
 } from 'antd';
 import { PoweroffOutlined, SettingOutlined } from '@ant-design/icons';
-import { GlobalContext } from '@/context';
-import useLocale from '@/utils/useLocale';
 import Logo from '@/assets/logo.svg';
 import Settings from '../Settings';
-import styles from './style/index.module.less';
-import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { useAppStore } from '@/store';
 import { generatePermission } from '@/routes';
-import { UserOutlined } from '@ant-design/icons';
 
-function Navbar({ show }: { show: boolean }) {
+function Navbar({ show, children }: { show: boolean, children: React.ReactNode }) {
   const { updateUserInfo, userInfo } = useAppStore(state => state);
 
   const [_, setUserStatus] = useStorage('userStatus');
   const [role, setRole] = useStorage('userRole', 'admin');
-
-  const { setLang, lang, theme, setTheme } = useContext(GlobalContext);
 
   function logout() {
     setUserStatus('logout');
     window.location.href = '/login';
   }
 
-  function onMenuItemClick(key) {
-    if (key === 'logout') {
-      logout();
-    } else {
-      // Message.info(`You clicked ${key}`);
-    }
-  }
-
   useEffect(() => {
-
-    // dispatch({
-    //   type: 'update-userInfo',
-    //   payload: {
-    //     userInfo: {
-    //       ...userInfo,
-    //       permissions: generatePermission(role),
-    //     },
-    //   },
-    // });
     updateUserInfo({
       userInfo: {
         ...userInfo,
@@ -60,7 +34,7 @@ function Navbar({ show }: { show: boolean }) {
 
   if (!show) {
     return (
-      <div className={styles['fixed-settings']}>
+      <div className="fixed top-72 right-0">
         <Settings
           trigger={
             <Button icon={<SettingOutlined />} type="primary" size="large" />
@@ -70,71 +44,35 @@ function Navbar({ show }: { show: boolean }) {
     );
   }
 
-  const handleChangeRole = () => {
-    const newRole = role === 'admin' ? 'user' : 'admin';
-    setRole(newRole);
+  const droplist: DropdownProps['menu'] = {
+    items: [
+      {
+        key: 'logout',
+        label: '退出登录',
+        icon: <PoweroffOutlined />,
+        onClick: () => {
+          logout();
+        }
+      }
+    ]
   };
 
-  const droplist = (
-    <Menu onClickMenuItem={onMenuItemClick}>
-      {/* <Menu.SubMenu
-        key="role"
-        title={
-          <>
-            <UserOutlined className={styles['dropdown-icon']} />
-            <span className={styles['user-role']}>
-              {role === 'admin'
-                ? t['menu.user.role.admin']
-                : t['menu.user.role.user']}
-            </span>
-          </>
-        }
-      >
-        <Menu.Item onClick={handleChangeRole} key="switch role">
-          <IconTag className={styles['dropdown-icon']} />
-          {t['menu.user.switchRoles']}
-        </Menu.Item>
-      </Menu.SubMenu>
-      <Menu.Item key="setting">
-        <IconSettings className={styles['dropdown-icon']} />
-        {t['menu.user.setting']}
-      </Menu.Item> */}
-      {/* <Menu.SubMenu
-        key="more"
-        title={
-          <div style={{ width: 80 }}>
-            <IconExperiment className={styles['dropdown-icon']} />
-            {t['message.seeMore']}
-          </div>
-        }
-      >
-        <Menu.Item key="workplace">
-          <IconDashboard className={styles['dropdown-icon']} />
-          {t['menu.dashboard.workplace']}
-        </Menu.Item>
-      </Menu.SubMenu> */}
-
-      <Divider style={{ margin: '4px 0' }} />
-      <Menu.Item key="logout">
-        <PoweroffOutlined className={styles['dropdown-icon']} />
-        退出登录
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
-    <div className={styles.navbar}>
-      <div className={styles.left}>
-        <div className={styles.logo}>
+    <div className="flex justify-between h-full">
+      <div className="flex items-center">
+        <div className="flex items-center w-48 pl-5">
           <Logo />
-          <div className={styles['logo-name']}>WanFlower</div>
+          <div className="text-gray-800 font-medium text-xl ml-2.5 font-['PingFang_SC']">
+            WanFlower
+          </div>
         </div>
+        {children}
       </div>
-      <ul className={styles.right}>
+      <ul className="flex list-none pr-5">
         {userInfo && (
-          <li>
-            <Dropdown droplist={droplist} position="br">
-              <Avatar size={32} style={{ cursor: 'pointer' }}>
+          <li className="px-2 flex items-center">
+            <Dropdown menu={droplist}>
+              <Avatar size={32} className="cursor-pointer">
                 <img alt="avatar" src={userInfo.avatar} />
               </Avatar>
             </Dropdown>

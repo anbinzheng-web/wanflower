@@ -1,3 +1,5 @@
+import { isLoggedIn } from './auth';
+
 export default function checkLogin() {
-  return localStorage.getItem('userStatus') === 'login';
+  return isLoggedIn();
 }

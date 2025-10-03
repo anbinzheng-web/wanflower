@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
 import { Button } from 'antd';
-import styles from './style/icon-button.module.less';
 import cs from 'classnames';
 
 function IconButton(props, ref) {
@@ -12,7 +11,7 @@ function IconButton(props, ref) {
       icon={icon}
       shape="circle"
       type="secondary"
-      className={cs(styles['icon-button'], className)}
+      className={cs('text-base border border-gray-300 [&>svg]:align-[-3px]', className)}
       {...rest}
     />
   );

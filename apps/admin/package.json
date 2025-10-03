@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite --mode development",
     "preview": "vite preview",
-    "build": "vite build",
-    "openapi": "pnpx tsx ./scripts/openapi.ts"
+    "build": "vite build"
   },
   "dependencies": {
     "@ant-design/icons": "~5.6.1",
@@ -18,14 +17,15 @@
     "ahooks": "^3.9.5",
     "antd": "^5.27.4",
     "axios": "^0.24.0",
+    "backend-api": "workspace:*",
     "bizcharts": "^4.1.23",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
+    "dayjs": "^1.11.18",
     "nprogress": "^0.2.0",
     "query-string": "^6.14.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "backend-api": "workspace:*",
     "react-markdown": "workspace:*",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",

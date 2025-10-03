@@ -8,7 +8,9 @@
     "dev": "pnpm -F wanflower.com dev",
     "admin:dev": "pnpm -F admin dev",
     "react-markdown:dev": "pnpm -F react-markdown dev",
-    "openapi": "pnpm -F backend-api openapi"
+    "openapi": "pnpm -F backend-api openapi",
+    "build:pkg": "pnpm -F \"./packages/**\" build",
+    "postinstall": "npm run build:pkg"
   },
   "keywords": [],
   "author": "",

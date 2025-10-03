@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import Logo from '@/assets/logo.svg';
 import LoginForm from './form';
 import LoginBanner from './banner';
-import styles from './style/index.module.less';
 
 function Login() {
   useEffect(() => {
@@ -11,23 +10,20 @@ function Login() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.logo}>
+    <div className="flex h-screen">
+      <div className="fixed top-6 left-6 z-10 flex items-center">
         <Logo />
-        <div className={styles['logo-text']}>Arco Design Pro</div>
+        <div className="ml-1 mr-1 text-xl text-white">万花电商管理后台</div>
       </div>
-      <div className={styles.banner}>
-        <div className={styles['banner-inner']}>
+      <div className="w-[550px] bg-gradient-to-br from-gray-800 to-blue-900 flex justify-center items-center">
+        <div className="h-full flex-1">
           <LoginBanner />
         </div>
       </div>
-      <div className={styles.content}>
-        <div className={styles['content-inner']}>
+      <div className="flex-1 relative pb-10 flex justify-center items-center">
+        <div className="flex-1 flex justify-center items-center">
           <LoginForm />
         </div>
-        {/* <div className={styles.footer}>
-          <Footer />
-        </div> */}
       </div>
     </div>
   );

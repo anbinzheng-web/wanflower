@@ -1,6 +1,6 @@
 import auth, { AuthParams } from '@/utils/authentication';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { FileOutlined, GiftOutlined } from '@ant-design/icons';
+import { FileOutlined, GiftOutlined, UserOutlined } from '@ant-design/icons';
 
 export type IRoute = AuthParams & {
   name: string;
@@ -23,6 +23,11 @@ export const routes: IRoute[] = [
     name: '博客文章',
     key: 'blog',
     icon: <FileOutlined />
+  },
+  {
+    name: '用户管理',
+    key: 'user',
+    icon: <UserOutlined />
   }
 ];
 

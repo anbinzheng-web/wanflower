@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { renderReactMarkdown } from './src';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 const md = `# Pluto
 

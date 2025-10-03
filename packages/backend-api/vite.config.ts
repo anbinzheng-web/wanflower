@@ -12,7 +12,11 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['axios'],
+      output: {
+        exports: 'named',
+      },
     },
+    minify: false,
   },
   plugins: [dts({ rollupTypes: true })],
 })

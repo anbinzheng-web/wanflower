@@ -4,24 +4,22 @@ import {
   Checkbox,
   Button,
   Space,
+  message,
 } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import useStorage from '@/utils/useStorage';
-import useLocale from '@/utils/useLocale';
-import locale from './locale';
-import styles from './style/index.module.less';
-import { FormInstance } from 'antd/lib';
+import { FormInstance } from 'antd/es/form';
+import { LoginDto } from 'backend-api';
+import { API } from '@/api';
+import { saveTokens, saveUserInfo } from '@/utils/auth';
 
 export default function LoginForm() {
-  const [formRef] = Form.useForm<FormInstance>()
+  const [formRef] = Form.useForm<LoginDto>()
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginParams, setLoginParams, removeLoginParams] =
     useStorage('loginParams');
-
-  const t = useLocale(locale);
 
   const [rememberPassword, setRememberPassword] = useState(!!loginParams);
 
@@ -38,18 +36,43 @@ export default function LoginForm() {
     window.location.href = '/';
   }
 
-  function login(params) {
+  function login(params: LoginDto) {
     setErrorMessage('');
     setLoading(true);
-    axios
-      .post('/api/user/login', params)
+    
+    API.auth.authControllerLogin(params)
       .then((res) => {
-        const { status, msg } = res.data;
-        if (status === 'ok') {
+        if (res.data) {
+          // 保存token和用户信息
+          if (res.data.access_token) {
+            saveTokens(res.data.access_token, res.data.refresh_token);
+          }
+          if (res.data.user) {
+            saveUserInfo(res.data.user);
+          }
+          message.success('登录成功！');
           afterLoginSuccess(params);
         } else {
-          setErrorMessage(msg || t['login.form.login.errMsg']);
+          setErrorMessage('登录出错，请刷新重试');
         }
+      })
+      .catch((error) => {
+        console.error('登录失败:', error);
+        let errorMsg = '登录出错，请刷新重试';
+        
+        if (error.response?.data?.message) {
+          errorMsg = error.response.data.message;
+        } else if (error.response?.status === 401) {
+          errorMsg = '邮箱或密码错误';
+        } else if (error.response?.status === 400) {
+          errorMsg = '请求参数错误';
+        } else if (error.response?.status >= 500) {
+          errorMsg = '服务器错误，请稍后重试';
+        } else if (error.code === 'NETWORK_ERROR') {
+          errorMsg = '网络连接失败，请检查网络';
+        }
+        
+        setErrorMessage(errorMsg);
       })
       .finally(() => {
         setLoading(false);
@@ -57,7 +80,7 @@ export default function LoginForm() {
   }
 
   function onSubmitClick() {
-    formRef.validateFields().then((values) => {
+    formRef.validateFields().then((values: LoginDto) => {
       login(values);
     });
   }
@@ -73,54 +96,48 @@ export default function LoginForm() {
   }, [loginParams]);
 
   return (
-    <div className={styles['login-form-wrapper']}>
-      <div className={styles['login-form-title']}>{t['login.form.title']}</div>
-      <div className={styles['login-form-sub-title']}>
-        {t['login.form.title']}
+    <div className="w-80">
+      <div className="text-2xl font-medium text-gray-900 mb-2">登录管理后台</div>
+      <div className="text-base text-gray-500 mb-6">
+        高效管理您的电商业务
       </div>
-      <div className={styles['login-form-error-msg']}>{errorMessage}</div>
+      <div className="h-8 leading-8 text-red-500 mb-4">{errorMessage}</div>
       <Form
-        className={styles['login-form']}
         layout="vertical"
-        ref={formRef}
-        initialValues={{ userName: 'admin', password: 'admin' }}
+        form={formRef}
+        initialValues={{ email: 'admin@example.com', password: 'admin' }}
       >
         <Form.Item
-          name="userName"
-          rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}
+          name="email"
+          rules={[
+            { required: true, message: '邮箱不能为空' },
+            { type: 'email', message: '请输入有效的邮箱地址' }
+          ]}
         >
           <Input
             prefix={<UserOutlined />}
-            placeholder={t['login.form.userName.placeholder']}
+            placeholder="邮箱地址"
             onPressEnter={onSubmitClick}
           />
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: t['login.form.password.errMsg'] }]}
+          rules={[{ required: true, message: '密码不能为空' }]}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder={t['login.form.password.placeholder']}
+            placeholder="密码"
             onPressEnter={onSubmitClick}
           />
         </Form.Item>
         <Space size={16} direction="vertical">
-          <div className={styles['login-form-password-actions']}>
-            <Checkbox checked={rememberPassword} onChange={setRememberPassword}>
-              {t['login.form.rememberPassword']}
+          <div className="flex justify-between">
+            <Checkbox checked={rememberPassword} onChange={(e) => setRememberPassword(e.target.checked)}>
+              记住密码
             </Checkbox>
-            {/* <Link>{t['login.form.forgetPassword']}</Link> */}
           </div>
-          <Button type="primary" long onClick={onSubmitClick} loading={loading}>
-            {t['login.form.login']}
-          </Button>
-          <Button
-            type="text"
-            long
-            className={styles['login-form-register-btn']}
-          >
-            {t['login.form.register']}
+          <Button type="primary" block onClick={onSubmitClick} loading={loading}>
+            登录
           </Button>
         </Space>
       </Form>
