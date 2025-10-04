@@ -1,6 +1,6 @@
 import { TableProps, ButtonProps } from 'antd';
 import { ColumnType } from 'antd/es/table/interface'
-import { ReactNode } from 'react';
+import { ReactNode, RefObject } from 'react';
 import { ComponentType } from '@/components/ProForm/interface';
 
 type ActionItem = {
@@ -8,6 +8,10 @@ type ActionItem = {
   icon?: ReactNode
   text?: ReactNode
   props?: Omit<ButtonProps, 'children' | 'loading' | 'onClick'>
+  collapsed?: boolean
+  isPopconfirm?: boolean
+  tooltipContent?: ReactNode
+  hide?: (record: any) => boolean
 }
 
 export interface ActionsProps {
@@ -21,11 +25,21 @@ export interface SearchProps {
   right?: ReactNode
 }
 
-export interface ProColumnsProps extends ColumnType<any> {
-  searchType?: ComponentType
-  searchProps?: any
-  searchDefaultValue?: any
-  searchFiled?: string
+export interface SearchItem {
+  type: ComponentType
+  props?: any
+  defaultValue?: any
+  filed?: string
+}
+
+type PrefixedSearch<T> = {
+  [K in keyof T as `search${Capitalize<string & K>}`]?: T[K]
+}
+
+export interface ProColumnsProps extends ColumnType<any>, PrefixedSearch<any> { }
+
+export interface ProTableRef {
+  refresh: () => void
 }
 
 export interface ProTableProps extends Omit<TableProps, 'columns' | 'noDataElement' | 'loading'> {
@@ -35,4 +49,5 @@ export interface ProTableProps extends Omit<TableProps, 'columns' | 'noDataEleme
   actions?: ActionsProps['actions']
   renderAction?: ColumnType['render']
   searchRight?: ReactNode
+  ref?: RefObject<ProTableRef>
 }

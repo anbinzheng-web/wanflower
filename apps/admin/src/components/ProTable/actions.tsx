@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ActionsProps } from './interface';
-import { Space, Button } from 'antd';
+import { Space, Button, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
 export const Actions = (props: ActionsProps) => {
   const { record, handleAction: handleActionProps, actions } = props;
@@ -21,9 +22,21 @@ export const Actions = (props: ActionsProps) => {
     }
   }
 
+  const showActions = useMemo(() => actions.filter(item => !item.hide?.(record)), [actions, record])
+
+  const dropdownItems = useMemo(() => {
+    return showActions.filter(item => item.collapsed).map(item => ({
+      key: item.name,
+      label: item.text,
+      icon: item.icon,
+      onClick: () => handleAction(item.name, record)
+    }))
+  }, [showActions])
+
   return <Space>
-    {actions.map(item => {
+    {showActions.filter(item => !item.collapsed).map(item => {
       return <Button 
+        shape="circle"
         key={item.name}
         type='text' 
         {...item.props}
@@ -32,5 +45,14 @@ export const Actions = (props: ActionsProps) => {
         onClick={() => handleAction(item.name, record)} 
       >{item.text}</Button>
     })}
+    {
+      dropdownItems.length > 0 ? <Dropdown menu={{ items: dropdownItems }}>
+        <Button type='text' icon={<DownOutlined />} />
+      </Dropdown> : null
+    }
   </Space>
+}
+
+export const defineActions = (actions: ActionsProps['actions']) => {
+  return actions;
 }

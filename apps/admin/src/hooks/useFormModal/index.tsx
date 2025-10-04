@@ -9,6 +9,7 @@ import { cloneElement, ReactElement } from 'react';
 interface FormModalProps extends Omit<ModalFuncProps, 'content' | 'footer'> {
   schemas?: ProFormProps['schemas']
   initialValues?: Record<string, any>
+  formProps?: ProFormProps
 }
 
 export const useFormModal = () => {
@@ -25,6 +26,7 @@ export const useFormModal = () => {
       cancelText = "取消", 
       title,
       initialValues,
+      formProps,
       ...rest 
     } = props;
     const hideModal = () => modal.destroy();
@@ -37,7 +39,7 @@ export const useFormModal = () => {
       modalRender: (dom) => {
         return cloneElement(dom as ReactElement, null, <div>
           <div className='text-lg font-bold mb-4'>{title}</div>
-          <ProForm schemas={schemas} onFinish={onFinish} initialValues={initialValues}>
+          <ProForm schemas={schemas} onFinish={onFinish} initialValues={initialValues} {...formProps}>
             <Form.Item noStyle>
               <Space className="w-full justify-end">
                 <Button onClick={hideModal} {...cancelButtonProps}>{cancelText}</Button>

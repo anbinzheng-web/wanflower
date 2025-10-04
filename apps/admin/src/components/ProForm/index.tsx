@@ -7,7 +7,7 @@ import type { FormInstance } from 'antd';
 export const ProForm = (props: ProFormProps) => {
   const { schemas, children, ...rest } = props;
   const [formRef] = Form.useForm<FormInstance>()
-  return <Form form={formRef} {...rest}>
+  return <Form form={formRef} {...rest} >
     {schemas.map((item, index) => {
       const { component, render, componentProps, ...formItemRest } = item;
       const Comp = typeof render === 'function' ? render(formRef) : Components[component];

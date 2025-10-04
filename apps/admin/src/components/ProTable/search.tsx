@@ -16,10 +16,10 @@ export const Search = (props: SearchProps) => {
   }, {})
   
   return <div className='flex justify-between items-start w-full'>
-    <Form initialValues={initialValues} form={form} onSubmit={request} wrapperCol={{ span: 24 }} className="w-full">
+    <Form initialValues={initialValues} form={form} onFinish={request} wrapperCol={{ span: 24 }} className="w-full">
       <Row gutter={16} className={"flex-1"}>
         {searchList.map((item, index) => {
-          const Search = Components[item.searchType]
+          const Search = Components[item.searchType] as any
           return <Col span={5} key={index}>
             <Form.Item name={item.searchFiled || item.dataIndex} style={{ marginBottom: 16 }}>
               <Search placeholder={item.title as string} {...item.searchProps} />

@@ -31,13 +31,6 @@ export function getAccessToken(): string | null {
 }
 
 /**
- * 获取刷新令牌
- */
-export function getRefreshToken(): string | null {
-  return localStorage.getItem('refresh_token');
-}
-
-/**
  * 检查用户是否已登录
  */
 export function isLoggedIn(): boolean {
@@ -56,11 +49,8 @@ export function saveUserInfo(userInfo: UserInfo): void {
 /**
  * 保存令牌
  */
-export function saveTokens(accessToken: string, refreshToken?: string): void {
+export function saveTokens(accessToken: string): void {
   localStorage.setItem('access_token', accessToken);
-  if (refreshToken) {
-    localStorage.setItem('refresh_token', refreshToken);
-  }
 }
 
 /**
@@ -68,7 +58,6 @@ export function saveTokens(accessToken: string, refreshToken?: string): void {
  */
 export function clearAuth(): void {
   localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
   localStorage.removeItem('user_info');
   localStorage.removeItem('userStatus');
 }
@@ -105,12 +94,6 @@ export function isTokenExpiring(): boolean {
  * 刷新token
  */
 export async function refreshToken(): Promise<boolean> {
-  const refreshTokenValue = getRefreshToken();
-  if (!refreshTokenValue) {
-    console.warn('没有刷新token，无法刷新访问token');
-    return false;
-  }
-
   try {
     // 这里需要导入API，但为了避免循环依赖，我们通过参数传入
     // 或者使用动态导入
@@ -118,7 +101,7 @@ export async function refreshToken(): Promise<boolean> {
     const response = await API.auth.authControllerRefresh();
     
     if (response.data && response.data.access_token) {
-      saveTokens(response.data.access_token, response.data.refresh_token);
+      saveTokens(response.data.access_token);
       console.log('Token刷新成功');
       return true;
     }

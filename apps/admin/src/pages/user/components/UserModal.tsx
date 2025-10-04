@@ -1,8 +1,8 @@
 import { useFormModal } from '@/hooks/useFormModal';
-import { message } from 'antd';
 import { API } from '@/api';
+import { ProTableRef } from '@/components/ProTable';
 
-export const useUserModal = () => {
+export const useUserModal = (ref: React.RefObject<ProTableRef>) => {
   const showFormModal = useFormModal();
 
   const showCreateModal = () => {
@@ -68,15 +68,22 @@ export const useUserModal = () => {
           valuePropName: 'checked'
         }
       ],
+      formProps: {
+        labelCol: { span: 6 },
+        wrapperCol: { span: 18 },
+      },
       onOk: async (values) => {
         try {
-          await API.users.userManagementControllerCreateUser(values);
-          message.success('用户创建成功');
-          return true;
+          const res = await API.users.userManagementControllerCreateUser(values);
+          if (res.code === 0) {
+            $message.success('用户创建成功');
+            ref.current?.refresh();
+          } else {
+            $message.error(res.message);
+          }
         } catch (error) {
           console.error('创建用户失败:', error);
-          message.error('创建用户失败');
-          return false;
+          $message.error('创建用户失败');
         }
       }
     });
@@ -144,6 +151,10 @@ export const useUserModal = () => {
           valuePropName: 'checked',
         }
       ],
+      formProps: {
+        labelCol: { span: 6 },
+        wrapperCol: { span: 18 },
+      },
       initialValues: record, // 暂时注释掉，需要查看ProForm是否支持
       onOk: async (values) => {
         try {
@@ -151,13 +162,16 @@ export const useUserModal = () => {
           if (!values.password) {
             delete values.password;
           }
-          await API.users.userManagementControllerUpdateUser(record.id, values);
-          message.success('用户更新成功');
-          return true;
+          const res = await API.users.userManagementControllerUpdateUser(record.id, values);
+          if (res.code === 0) {
+            $message.success('用户更新成功');
+            ref.current?.refresh();
+          } else {
+            $message.error(res.message);
+          }
         } catch (error) {
           console.error('更新用户失败:', error);
-          message.error('更新用户失败');
-          return false;
+          $message.error('更新用户失败');
         }
       }
     });
@@ -175,15 +189,22 @@ export const useUserModal = () => {
           rules: [{ required: true, message: '请输入新密码' }, { min: 6, message: '密码至少6位' }]
         }
       ],
+      formProps: {
+        labelCol: { span: 6 },
+        wrapperCol: { span: 18 },
+      },
       onOk: async (values) => {
         try {
-          await API.users.userManagementControllerResetUserPassword(record.id, values);
-          message.success('密码重置成功');
-          return true;
+          const res = await API.users.userManagementControllerResetUserPassword(record.id, values);
+          if (res.code === 0) {
+            $message.success('密码重置成功');
+            ref.current?.refresh();
+          } else {
+            $message.error(res.message);
+          }
         } catch (error) {
           console.error('重置密码失败:', error);
-          message.error('重置密码失败');
-          return false;
+          $message.error('重置密码失败');
         }
       }
     });

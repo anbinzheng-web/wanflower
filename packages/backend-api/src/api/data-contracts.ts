@@ -271,6 +271,21 @@ export interface ReviewBatchModerationDto {
   moderation_note?: string;
 }
 
+export interface SwaggerPaginatedResponse {
+  /**
+   * 响应状态码
+   * @example 0
+   */
+  code: number;
+  /** 分页数据 */
+  data: object;
+  /**
+   * 响应消息
+   * @example "success"
+   */
+  message: string;
+}
+
 export interface BlogSlugDto {
   /** slug */
   slug: string;
@@ -438,6 +453,12 @@ export interface LoginDto {
   password?: string;
 }
 
+export interface PaginatedDto {
+  total: number;
+  page: number;
+  page_size: number;
+}
+
 export interface UserResponseDto {
   /**
    * 用户ID
@@ -485,11 +506,6 @@ export interface UserResponseDto {
    */
   is_active: boolean;
   /**
-   * 登录次数
-   * @example 5
-   */
-  login_count: number;
-  /**
    * 最后登录时间
    * @format date-time
    * @example "2024-01-15T10:30:00Z"
@@ -509,29 +525,9 @@ export interface UserResponseDto {
   updated_at: string;
 }
 
-export interface UserListResponseDto {
-  /** 用户列表 */
-  records: UserResponseDto[];
-  /**
-   * 总数量
-   * @example 100
-   */
-  total: number;
-  /**
-   * 当前页码
-   * @example 1
-   */
-  page: number;
-  /**
-   * 每页数量
-   * @example 10
-   */
-  page_size: number;
-  /**
-   * 总页数
-   * @example 10
-   */
-  totalPages: number;
+export interface MessageDto {
+  code: number;
+  message: string;
 }
 
 export interface UpdateUserDto {
@@ -578,6 +574,8 @@ export interface UpdateUserDto {
    */
   is_active?: boolean;
 }
+
+export type DefaultModel = object;
 
 export interface UpdateUserStatusDto {
   /**
@@ -1025,7 +1023,7 @@ export enum SortOrderEnum {
   Desc = "desc",
 }
 
-export type BlogControllerListData = any;
+export type BlogControllerListData = SwaggerPaginatedResponse;
 
 /** 排序字段 */
 export enum BlogControllerListParams1SortByEnum {
@@ -1189,7 +1187,9 @@ export enum SortOrderEnum1 {
   Desc = "desc",
 }
 
-export type UserManagementControllerGetUsersData = UserListResponseDto;
+export type UserManagementControllerGetUsersData = PaginatedDto & {
+  records?: UserResponseDto[];
+};
 
 /** 角色筛选 */
 export enum UserManagementControllerGetUsersParams1RoleEnum {
@@ -1207,20 +1207,58 @@ export enum UserManagementControllerGetUsersParams1SortOrderEnum {
   Desc = "desc",
 }
 
-export type UserManagementControllerCreateUserData = UserResponseDto;
+export type UserManagementControllerCreateUserData = MessageDto & {
+  data?: UserResponseDto;
+};
 
-export type UserManagementControllerGetUserByIdData = UserResponseDto;
+export type UserManagementControllerGetUserByIdData = MessageDto & {
+  data?: UserResponseDto;
+};
 
-export type UserManagementControllerUpdateUserData = UserResponseDto;
+export type UserManagementControllerUpdateUserData = MessageDto & {
+  data?: UserResponseDto;
+};
 
-export type UserManagementControllerDeleteUserData = any;
+export type UserManagementControllerDeleteUserData = MessageDto & {
+  data?: object;
+};
 
-export type UserManagementControllerUpdateUserStatusData = any;
+export type UserManagementControllerUpdateUserStatusData = MessageDto & {
+  data?: object;
+};
 
-export type UserManagementControllerUpdateUserRoleData = any;
+export type UserManagementControllerUpdateUserRoleData = MessageDto & {
+  data?: object;
+};
 
-export type UserManagementControllerResetUserPasswordData = any;
+export type UserManagementControllerResetUserPasswordData = MessageDto & {
+  data?: object;
+};
 
-export type UserManagementControllerVerifyUserEmailData = any;
+export type UserManagementControllerVerifyUserEmailData = MessageDto & {
+  data?: object;
+};
 
-export type UserManagementControllerGetUserStatsData = any;
+export type UserActivityControllerGetActivityStatsData = any;
+
+export type UserActivityControllerGetTodayActiveUsersData = any;
+
+export type UserActivityControllerGetWeeklyActiveUsersData = any;
+
+export type UserActivityControllerGetMonthlyActiveUsersData = any;
+
+export interface UserActivityControllerGetActiveUsersTrendParams {
+  /** 天数，默认7天 */
+  days?: string;
+}
+
+export type UserActivityControllerGetActiveUsersTrendData = any;
+
+export interface UserActivityControllerGetInactiveUsersParams {
+  /** 不活跃天数，默认30天 */
+  days?: string;
+}
+
+export type UserActivityControllerGetInactiveUsersData = any;
+
+export type UserActivityControllerGetActivityDistributionData = any;

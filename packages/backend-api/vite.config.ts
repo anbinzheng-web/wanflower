@@ -18,5 +18,9 @@ export default defineConfig({
     },
     minify: false,
   },
-  plugins: [dts({ rollupTypes: true })],
+  plugins: [dts({ 
+    rollupTypes: false,
+    include: ['src/**/*'],
+    exclude: ['**/*.test.ts', '**/*.spec.ts']
+  })],
 })

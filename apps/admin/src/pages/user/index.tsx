@@ -3,10 +3,12 @@ import { EditOutlined, DeleteOutlined, KeyOutlined, CheckCircleOutlined, StopOut
 import { Button, Tag } from 'antd';
 import { API } from '@/api';
 import { useUserModal } from './components/UserModal';
+import { useRef } from 'react';
+import { ProTableRef } from '@/components/ProTable';
 
 export default function User() {
-  const { showCreateModal, showEditModal, showResetPasswordModal } = useUserModal();
-  
+  const tableRef = useRef<ProTableRef>(null);
+  const { showCreateModal, showEditModal, showResetPasswordModal } = useUserModal(tableRef);
   const columns = defineColumns([
     {
       title: 'ID',
@@ -37,7 +39,8 @@ export default function User() {
     {
       title: '邮箱',
       dataIndex: 'email',
-      ellipsis: true
+      ellipsis: true,
+      searchType: 'Input'
     },
     {
       title: '手机号',
@@ -76,22 +79,19 @@ export default function User() {
       )
     },
     {
-      title: '登录次数',
-      dataIndex: 'login_count',
-      width: 100,
-      sorter: true
+      title: '最近登陆时间',
+      dataIndex: 'last_login',
+      render: (last_login) => $formatDate(last_login),
     },
     {
-      title: '最后登录',
-      dataIndex: 'last_login',
-      render: (last_login) => last_login ? $formatDate(last_login) : '-',
-      sorter: true
+      title: '更新时间',
+      dataIndex: 'updated_at',
+      render: (text) => $formatDate(text),
     },
     {
       title: '创建时间',
       dataIndex: 'created_at',
       render: (text) => $formatDate(text),
-      sorter: true
     }
   ])
 
@@ -100,29 +100,32 @@ export default function User() {
     {
       name: 'edit',
       icon: <EditOutlined />,
-      text: '编辑'
     },
     {
       name: 'delete',
       icon: <DeleteOutlined />,
       text: '删除',
-      danger: true
+      danger: true,
+      collapsed: true
     },
     {
       name: 'resetPassword',
       icon: <KeyOutlined />,
-      text: '重置密码'
+      text: '重置密码',
+      collapsed: true
     },
     {
       name: 'verifyEmail',
       icon: <CheckCircleOutlined />,
       text: '验证邮箱',
-      hide: (record) => record.is_verified
+      hide: (record) => record.is_verified,
+      collapsed: true
     },
     {
       name: 'toggleStatus',
       icon: <StopOutlined />,
-      text: '切换状态'
+      text: '切换状态',
+      collapsed: true
     }
   ]
 
@@ -153,7 +156,7 @@ export default function User() {
       await API.users.userManagementControllerDeleteUser(record.id);
       $message.success('用户删除成功');
       // 刷新表格
-      window.location.reload();
+      tableRef.current?.refresh();
     } catch (error) {
       console.error('删除用户失败:', error);
       $message.error('删除用户失败');
@@ -165,7 +168,7 @@ export default function User() {
       await API.users.userManagementControllerVerifyUserEmail(record.id);
       $message.success('邮箱验证成功');
       // 刷新表格
-      window.location.reload();
+      tableRef.current?.refresh();
     } catch (error) {
       console.error('验证邮箱失败:', error);
       $message.error('验证邮箱失败');
@@ -175,10 +178,11 @@ export default function User() {
   const handleToggleStatus = async (record) => {
     try {
       const newStatus = !record.is_active;
-      await API.users.userManagementControllerUpdateUserStatus(record.id, { is_active: newStatus });
-      $message.success(`用户已${newStatus ? '激活' : '禁用'}`);
-      // 刷新表格
-      window.location.reload();
+      const res = await API.users.userManagementControllerUpdateUserStatus(record.id, { is_active: newStatus });
+      if (res.code === 0) {
+        $message.success(`用户已${newStatus ? '激活' : '禁用'}`);
+        tableRef.current?.refresh();
+      } 
     } catch (error) {
       console.error('切换用户状态失败:', error);
       $message.error('切换用户状态失败');
@@ -199,6 +203,7 @@ export default function User() {
       }}
       rowKey="id"
       scroll={{ x: 'max-content' }}
+      ref={tableRef}
     />
   )
 }

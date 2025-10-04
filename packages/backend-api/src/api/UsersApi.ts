@@ -24,7 +24,6 @@ import {
   UserManagementControllerGetUserByIdData,
   UserManagementControllerGetUsersData,
   UserManagementControllerGetUsersParams,
-  UserManagementControllerGetUserStatsData,
   UserManagementControllerResetUserPasswordData,
   UserManagementControllerUpdateUserData,
   UserManagementControllerUpdateUserRoleData,
@@ -90,7 +89,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 获取用户列表
    * @request GET:/api/admin/users
    * @secure
-   * @response `200` `UserManagementControllerGetUsersData` 获取成功
+   * @response `200` `UserManagementControllerGetUsersData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    */
@@ -114,7 +113,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 创建用户
    * @request POST:/api/admin/users
    * @secure
-   * @response `201` `UserManagementControllerCreateUserData` 创建成功
+   * @response `200` `UserManagementControllerCreateUserData`
    * @response `400` `void` 请求参数错误
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
@@ -140,7 +139,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 获取用户详情
    * @request GET:/api/admin/users/{id}
    * @secure
-   * @response `200` `UserManagementControllerGetUserByIdData` 获取成功
+   * @response `200` `UserManagementControllerGetUserByIdData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    * @response `404` `void` 用户不存在
@@ -164,7 +163,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 更新用户信息
    * @request PUT:/api/admin/users/{id}
    * @secure
-   * @response `200` `UserManagementControllerUpdateUserData` 更新成功
+   * @response `200` `UserManagementControllerUpdateUserData`
    * @response `400` `void` 请求参数错误
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
@@ -192,7 +191,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 删除用户
    * @request DELETE:/api/admin/users/{id}
    * @secure
-   * @response `204` `UserManagementControllerDeleteUserData` 删除成功
+   * @response `200` `UserManagementControllerDeleteUserData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    * @response `404` `void` 用户不存在
@@ -205,6 +204,7 @@ export class UsersApi<SecurityDataType = unknown> {
       path: `/api/admin/users/${id}`,
       method: "DELETE",
       secure: true,
+      format: "json",
       ...params,
     });
   /**
@@ -215,7 +215,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 更新用户状态
    * @request PUT:/api/admin/users/{id}/status
    * @secure
-   * @response `200` `UserManagementControllerUpdateUserStatusData` 更新成功
+   * @response `200` `UserManagementControllerUpdateUserStatusData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    * @response `404` `void` 用户不存在
@@ -231,6 +231,7 @@ export class UsersApi<SecurityDataType = unknown> {
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -241,7 +242,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 更新用户角色
    * @request PUT:/api/admin/users/{id}/role
    * @secure
-   * @response `200` `UserManagementControllerUpdateUserRoleData` 更新成功
+   * @response `200` `UserManagementControllerUpdateUserRoleData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    * @response `404` `void` 用户不存在
@@ -257,6 +258,7 @@ export class UsersApi<SecurityDataType = unknown> {
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -267,7 +269,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 重置用户密码
    * @request PUT:/api/admin/users/{id}/password
    * @secure
-   * @response `200` `UserManagementControllerResetUserPasswordData` 重置成功
+   * @response `200` `UserManagementControllerResetUserPasswordData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    * @response `404` `void` 用户不存在
@@ -283,6 +285,7 @@ export class UsersApi<SecurityDataType = unknown> {
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -293,7 +296,7 @@ export class UsersApi<SecurityDataType = unknown> {
    * @summary 验证用户邮箱
    * @request PUT:/api/admin/users/{id}/verify-email
    * @secure
-   * @response `200` `UserManagementControllerVerifyUserEmailData` 验证成功
+   * @response `200` `UserManagementControllerVerifyUserEmailData`
    * @response `401` `void` 未授权
    * @response `403` `void` 权限不足
    * @response `404` `void` 用户不存在
@@ -306,25 +309,7 @@ export class UsersApi<SecurityDataType = unknown> {
       path: `/api/admin/users/${id}/verify-email`,
       method: "PUT",
       secure: true,
-      ...params,
-    });
-  /**
-   * @description 获取用户总数、角色分布等统计信息
-   *
-   * @tags users
-   * @name UserManagementControllerGetUserStats
-   * @summary 获取用户统计信息
-   * @request GET:/api/admin/users/stats/overview
-   * @secure
-   * @response `200` `UserManagementControllerGetUserStatsData` 获取成功
-   * @response `401` `void` 未授权
-   * @response `403` `void` 权限不足
-   */
-  userManagementControllerGetUserStats = (params: RequestParams = {}) =>
-    this.http.request<UserManagementControllerGetUserStatsData, void>({
-      path: `/api/admin/users/stats/overview`,
-      method: "GET",
-      secure: true,
+      format: "json",
       ...params,
     });
 }

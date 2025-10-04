@@ -1,6 +1,6 @@
 import { Table, Result, Button } from 'antd';
 import { ProTableProps } from './interface'
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useImperativeHandle } from 'react';
 import { isFunction, isArray } from '@/utils/is';
 import { Provider } from './context';
 import { Actions } from './actions';
@@ -15,6 +15,7 @@ export const ProTable = (props: ProTableProps) => {
     renderAction, 
     actions,
     searchRight, 
+    ref,
     ...rest 
   } = props;
   const defaultParams = {
@@ -87,6 +88,14 @@ export const ProTable = (props: ProTableProps) => {
     })
   }
 
+  useImperativeHandle(ref, () => {
+    return {
+      refresh: () => {
+        fetchData()
+      }
+    }
+  })
+
   return <Provider setParams={setParams} params={params} request={fetchData}>
     <div className='bg-white p-4'>
       <Search columns={columns} right={searchRight} />
@@ -95,7 +104,7 @@ export const ProTable = (props: ProTableProps) => {
         {...rest} 
         columns={columns as any[]} 
         dataSource={dataSource || tableData}
-        noDataElement={errorResult}
+        locale={{ emptyText: errorResult }}
         loading={loading}
       ></Table>
     </div>
@@ -105,3 +114,7 @@ export const ProTable = (props: ProTableProps) => {
 export const defineColumns = (columns: ProTableProps['columns']) => {
   return columns as ProTableProps['columns']
 }
+
+export { defineActions } from './actions'
+
+export * from './interface'

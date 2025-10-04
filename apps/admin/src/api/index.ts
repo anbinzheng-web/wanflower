@@ -9,6 +9,8 @@ export const httpClient = new HttpClient({
   // paramsSerializer(params) {
   //   return qs.stringify(params, { arrayFormat: 'comma' })
   // },
+  // 配置请求默认选项
+  withCredentials: true, // 发送 cookie
 })
 
 httpClient.instance.interceptors.request.use(async (config) => {
@@ -49,7 +51,7 @@ function processQueue(error: any, token: string | null = null) {
 httpClient.instance.interceptors.response.use(
   async (response) => {
     // 检查响应体中的错误码
-    if (response.data && response.data.code === 4000 && response.data.message === 'Unauthorized') {
+    if (response.data && response.data.code === 401 && response.data.message === 'Unauthorized') {
       // 这是一个认证错误，需要刷新token
       const originalRequest = response.config
       

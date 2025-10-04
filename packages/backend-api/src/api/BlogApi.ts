@@ -65,6 +65,7 @@ export class BlogApi<SecurityDataType = unknown> {
       path: `/api/blog/list`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
