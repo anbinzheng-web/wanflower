@@ -38,7 +38,7 @@ export type FormSchema<T extends ComponentType = ComponentType> =
       })
     : never
 
-export interface ProFormProps extends FormProps {
+export interface ProFormProps extends Omit<FormProps, 'children'> {
   schemas?: FormSchema[]
-  children?: React.ReactNode
+  children?: React.ReactNode | ((formItems: React.ReactNode[], formRef: FormInstance) => React.ReactNode)
 }

@@ -1,10 +1,11 @@
 import { ProTable, defineColumns } from '@/components/ProTable'
 import { Button, Space } from 'antd'
 import { EditOutlined } from '@ant-design/icons';
-import { Markdown } from '@/components/Markdown';
-import { MarkdownTest } from './test.md';
+// import { Markdown } from '@/components/Markdown';
+// import { MarkdownTest } from './test.md';
 import { Suspense } from 'react';
 import { useFormModal } from '@/hooks/useFormModal';
+import { useFullModal } from '@/hooks/useFullModal';
 
 const md = `# Pluto
 
@@ -40,6 +41,7 @@ Pluto’s orbital period is about 248 years…
 
 export default function() {
   const showFormModal = useFormModal();
+  const showFullModal = useFullModal();
   const columns = defineColumns([
     {
       title: 'ID',
@@ -130,14 +132,34 @@ export default function() {
     })
   }
 
-  const searchRight = <Button type='primary' onClick={handleCreate}>创建</Button>
+  const handleUpdate = () => {
+    showFullModal({
+      schemas: [
+        {
+          name: 'title',
+          label: '标题',
+          component: 'Input'
+        },
+        {
+          name: 'status',
+          label: '状态',
+          component: 'Select'
+        }
+      ],
+      onOk: async (values) => {
+        console.log(values)
+      }
+    })
+  }
+
+  const searchRight = <Button type='primary' onClick={handleUpdate}>创建</Button>
   return <div>
     <ProTable columns={columns} request={request} searchRight={searchRight} actions={actions} handleAction={handleAction}></ProTable>
 
     {/* <Markdown md={md}></Markdown> */}
 
-    <Suspense fallback={<div>Loading markdown...</div>}>
+    {/* <Suspense fallback={<div>Loading markdown...</div>}>
       <MarkdownTest md={md} />
-    </Suspense>
+    </Suspense> */}
   </div>
 }

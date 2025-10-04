@@ -9,14 +9,14 @@ export const Actions = (props: ActionsProps) => {
 
   const handleAction: ActionsProps['handleAction'] = async (name, record) => {
     setButtonLoading((map) => {
-      map[name] = true
+      map[record.id] = true
       return { ...map }
     })
     try {
       await handleActionProps(name, record)
     } finally {
       setButtonLoading((map) => {
-        map[name] = false;
+        map[record.id] = false;
         return { ...map }
       })
     }
@@ -41,7 +41,7 @@ export const Actions = (props: ActionsProps) => {
         type='text' 
         {...item.props}
         icon={item.icon} 
-        loading={buttonLoading[item.name]}
+        loading={buttonLoading[record.id]}
         onClick={() => handleAction(item.name, record)} 
       >{item.text}</Button>
     })}
@@ -55,4 +55,8 @@ export const Actions = (props: ActionsProps) => {
 
 export const defineActions = (actions: ActionsProps['actions']) => {
   return actions;
+}
+
+export const useActions = (actions: ActionsProps['actions']) => {
+  return useState<ActionsProps['actions']>(actions)
 }

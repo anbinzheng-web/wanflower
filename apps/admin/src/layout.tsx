@@ -174,62 +174,29 @@ function PageLayout() {
       {userLoading ? (
         <Spin className={styles['spin']} />
       ) : (
-        <Layout>
-          {/* {showMenu && (
-            <Sider
-              width={menuWidth}
-              collapsed={collapsed}
-              onCollapse={setCollapsed}
-              trigger={null}
-              collapsible
-              breakpoint="xl"
-              className="h-[calc(100vh-61px)]"
-              style={{ height: 'calc(100vh-61px)' }}
-            >
-              <div className='h-[calc(100%-40px)]'>
-                <Menu
-                  selectedKeys={selectedKeys}
-                  mode="horizontal"
-                  openKeys={openKeys}
-                  onOpenChange={(openKeys) => {
-                    setOpenKeys(openKeys);
-                  }}
-                  onClick={({ key }) => {
-                    onClickMenuItem(key)
-                  }}
-                  theme="dark"
-                  items={renderRoutes(locale)(routes, 1)}
+        <Layout className={'h-[calc(100vh-48px)] overflow-auto'}>
+          <div className={'p-3'}>
+            <Content>
+              <Switch>
+                {flattenRoutes.map((route, index) => {
+                  return (
+                    <Route
+                      key={index}
+                      path={`/${route.key}`}
+                      component={route.component}
+                    />
+                  );
+                })}
+                <Route exact path="/">
+                  <Redirect to={`/${defaultRoute}`} />
+                </Route>
+                <Route
+                  path="*"
+                  component={lazyload(() => import('./pages/exception/403'))}
                 />
-              </div>
-              <div className={'text-white h-10 flex items-center justify-center cursor-pointer'} onClick={toggleCollapse} >
-                {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              </div>
-            </Sider>
-          )} */}
-          <Layout className={'h-[calc(100vh-61px)] overflow-auto'}>
-            <div className={'p-3'}>
-              <Content>
-                <Switch>
-                  {flattenRoutes.map((route, index) => {
-                    return (
-                      <Route
-                        key={index}
-                        path={`/${route.key}`}
-                        component={route.component}
-                      />
-                    );
-                  })}
-                  <Route exact path="/">
-                    <Redirect to={`/${defaultRoute}`} />
-                  </Route>
-                  <Route
-                    path="*"
-                    component={lazyload(() => import('./pages/exception/403'))}
-                  />
-                </Switch>
-              </Content>
-            </div>
-          </Layout>
+              </Switch>
+            </Content>
+          </div>
         </Layout>
       )}
     </Layout>

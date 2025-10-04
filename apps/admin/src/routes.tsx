@@ -17,7 +17,19 @@ export const routes: IRoute[] = [
   {
     name: '产品管理',
     key: 'product',
-    icon: <GiftOutlined />
+    icon: <GiftOutlined />,
+    children: [
+      {
+        name: '产品列表',
+        key: 'product/list',
+        // requiredPermissions: [{ resource: 'product', actions: ['read'] }]
+      },
+      {
+        name: '产品分类',
+        key: 'product/category',
+        // requiredPermissions: [{ resource: 'product', actions: ['read'] }]
+      }
+    ]
   },
   {
     name: '博客文章',

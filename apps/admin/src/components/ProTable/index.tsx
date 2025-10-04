@@ -115,6 +115,10 @@ export const defineColumns = (columns: ProTableProps['columns']) => {
   return columns as ProTableProps['columns']
 }
 
-export { defineActions } from './actions'
+export const useColumns = (columns: ProTableProps['columns']) => {
+  return useState<ProTableProps['columns']>(columns)
+}
+
+export { defineActions, useActions } from './actions'
 
 export * from './interface'

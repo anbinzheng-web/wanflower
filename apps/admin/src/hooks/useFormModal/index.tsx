@@ -5,6 +5,7 @@ import { ProForm } from '@/components/ProForm';
 import { ProFormProps } from '@/components/ProForm/interface';
 import { ModalFunc } from 'antd/es/modal/confirm';
 import { cloneElement, ReactElement } from 'react';
+import { CloseOutlined } from '@ant-design/icons';
 
 interface FormModalProps extends Omit<ModalFuncProps, 'content' | 'footer'> {
   schemas?: ProFormProps['schemas']
@@ -38,7 +39,10 @@ export const useFormModal = () => {
       ...rest,
       modalRender: (dom) => {
         return cloneElement(dom as ReactElement, null, <div>
-          <div className='text-lg font-bold mb-4'>{title}</div>
+          <div className='text-lg font-bold mb-6 flex justify-between items-center'>
+            {title}
+            <CloseOutlined onClick={hideModal} />
+          </div>
           <ProForm schemas={schemas} onFinish={onFinish} initialValues={initialValues} {...formProps}>
             <Form.Item noStyle>
               <Space className="w-full justify-end">
