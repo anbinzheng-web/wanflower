@@ -29,6 +29,9 @@ export const Actions = (props: ActionsProps) => {
       key: item.name,
       label: item.text,
       icon: item.icon,
+      type: item.type,
+      danger: item.danger,
+      disabled: item.disabled,
       onClick: () => handleAction(item.name, record)
     }))
   }, [showActions])
@@ -39,15 +42,16 @@ export const Actions = (props: ActionsProps) => {
         shape="circle"
         key={item.name}
         type='text' 
-        {...item.props}
+        danger={item.danger}
         icon={item.icon} 
         loading={buttonLoading[record.id]}
-        onClick={() => handleAction(item.name, record)} 
+        onClick={() => handleAction(item.name, record)}
+        {...item.props} 
       >{item.text}</Button>
     })}
     {
       dropdownItems.length > 0 ? <Dropdown menu={{ items: dropdownItems }}>
-        <Button type='text' icon={<DownOutlined />} />
+        <Button type='text' icon={<DownOutlined />}/>
       </Dropdown> : null
     }
   </Space>

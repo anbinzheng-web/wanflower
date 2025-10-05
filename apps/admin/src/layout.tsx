@@ -58,11 +58,7 @@ function PageLayout() {
     Map<string, { menuItem?: boolean; subMenu?: boolean }>
   >(new Map());
 
-  const navbarHeight = 60;
-  const menuWidth = collapsed ? 48 : settings.menuWidth;
-
   const showNavbar = settings.navbar && urlParams.navbar !== false;
-  const showMenu = settings.menu && urlParams.menu !== false;
 
   const flattenRoutes = useMemo(() => getFlattenRoutes(routes) || [], [routes]);
 
@@ -159,7 +155,6 @@ function PageLayout() {
           <Menu
             selectedKeys={selectedKeys}
             mode="horizontal"
-            openKeys={openKeys}
             onOpenChange={(openKeys) => {
               setOpenKeys(openKeys);
             }}

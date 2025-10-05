@@ -10,6 +10,70 @@
  * ---------------------------------------------------------------
  */
 
+export interface PaginatedDto {
+  /**
+   * 响应状态码
+   * @example 0
+   */
+  code: number;
+  /** 分页数据 */
+  data: object;
+  /**
+   * 响应消息
+   * @example "success"
+   */
+  message: string;
+}
+
+export interface ProductListDto {
+  /**
+   * 页码
+   * @default 1
+   */
+  page?: number;
+  /**
+   * 每页条数
+   * @default 20
+   */
+  page_size?: number;
+  /** 价格排序 */
+  price_order?: ProductListDtoPriceOrderEnum;
+  /** 销量排序 */
+  sales_order?: ProductListDtoSalesOrderEnum;
+  /** 浏览量排序 */
+  view_order?: ProductListDtoViewOrderEnum;
+  /** 产品状态筛选 */
+  status?: ProductListDtoStatusEnum;
+  /** 分类ID筛选 */
+  category_id?: number;
+  /** 关键词搜索 */
+  keyword?: string;
+  /** 最低价格筛选 */
+  min_price?: number;
+  /** 最高价格筛选 */
+  max_price?: number;
+}
+
+export interface MessageDto {
+  /**
+   * 响应状态码
+   * @example 0
+   */
+  code: number;
+  /**
+   * 响应消息
+   * @example "success"
+   */
+  message: string;
+  /** 响应数据 */
+  data: object;
+}
+
+export interface ProductDetailDto {
+  /** 产品ID */
+  id: number;
+}
+
 export interface ProductViewDto {
   /** 产品ID */
   id: number;
@@ -180,6 +244,33 @@ export interface CategoryUpdateDto {
   id: number;
 }
 
+export type Object = object;
+
+export interface ProductAttributeCreateDto {
+  /** 产品ID */
+  product_id: number;
+  /** 属性名称 */
+  name: string;
+  /** 属性值 */
+  value: string;
+  /**
+   * 排序权重
+   * @default 0
+   */
+  sort_order?: number;
+}
+
+export interface ProductAttributeUpdateDto {
+  /** 属性ID */
+  id: number;
+  /** 属性名称 */
+  name?: string;
+  /** 属性值 */
+  value?: string;
+  /** 排序权重 */
+  sort_order?: number;
+}
+
 export interface ReviewCreateDto {
   /** 产品ID */
   product_id: number;
@@ -271,20 +362,38 @@ export interface ReviewBatchModerationDto {
   moderation_note?: string;
 }
 
-export interface SwaggerPaginatedResponse {
+export interface BlogListDto {
   /**
-   * 响应状态码
-   * @example 0
+   * 页码
+   * @default 1
    */
-  code: number;
-  /** 分页数据 */
-  data: object;
+  page?: number;
   /**
-   * 响应消息
-   * @example "success"
+   * 每页条数
+   * @default 20
    */
-  message: string;
+  page_size?: number;
+  /** 博客状态 */
+  status: string;
+  /** 项目类型 */
+  project_type: string;
+  /** 模糊搜索/title+md */
+  search: string;
+  /** 标签ID列表 */
+  tag_ids: string[];
+  /** 分类ID列表 */
+  category_ids: string[];
+  /** 是否精选 */
+  is_featured: boolean;
+  /** 语言代码 */
+  language: string;
+  /** 排序字段 */
+  sort_by: BlogListDtoSortByEnum;
+  /** 排序方向 */
+  sort_order: BlogListDtoSortOrderEnum;
 }
+
+export type DefaultModel = object;
 
 export interface BlogSlugDto {
   /** slug */
@@ -348,6 +457,25 @@ export interface ByIdDto {
   id: number;
 }
 
+export interface BlogTagListDto {
+  /**
+   * 页码
+   * @default 1
+   */
+  page?: number;
+  /**
+   * 每页条数
+   * @default 20
+   */
+  page_size?: number;
+  /** 项目类型 */
+  project_type: string;
+  /** 是否启用 */
+  is_active: boolean;
+  /** 搜索标签名称 */
+  search: string;
+}
+
 export interface BlogTagCreateDto {
   /** 标签名称 */
   name: string;
@@ -371,6 +499,27 @@ export interface BlogTagUpdateDto {
   id: number;
   /** 是否启用 */
   is_active: boolean;
+}
+
+export interface BlogCategoryListDto {
+  /**
+   * 页码
+   * @default 1
+   */
+  page?: number;
+  /**
+   * 每页条数
+   * @default 20
+   */
+  page_size?: number;
+  /** 项目类型 */
+  project_type: string;
+  /** 是否启用 */
+  is_active: boolean;
+  /** 父分类ID */
+  parent_id: number;
+  /** 搜索分类名称 */
+  search: string;
 }
 
 export interface BlogCategoryCreateDto {
@@ -453,12 +602,6 @@ export interface LoginDto {
   password?: string;
 }
 
-export interface PaginatedDto {
-  total: number;
-  page: number;
-  page_size: number;
-}
-
 export interface UserResponseDto {
   /**
    * 用户ID
@@ -525,11 +668,6 @@ export interface UserResponseDto {
   updated_at: string;
 }
 
-export interface MessageDto {
-  code: number;
-  message: string;
-}
-
 export interface UpdateUserDto {
   /**
    * 邮箱地址
@@ -575,8 +713,6 @@ export interface UpdateUserDto {
   is_active?: boolean;
 }
 
-export type DefaultModel = object;
-
 export interface UpdateUserStatusDto {
   /**
    * 是否激活
@@ -599,6 +735,31 @@ export interface ResetUserPasswordDto {
    * @example "newpassword123"
    */
   password: string;
+}
+
+/** 价格排序 */
+export enum ProductListDtoPriceOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+/** 销量排序 */
+export enum ProductListDtoSalesOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+/** 浏览量排序 */
+export enum ProductListDtoViewOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+/** 产品状态筛选 */
+export enum ProductListDtoStatusEnum {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  DRAFT = "DRAFT",
 }
 
 /** 商品状态 */
@@ -664,6 +825,21 @@ export enum ReviewBatchModerationDtoStatusEnum {
   PENDING = "PENDING",
   APPROVED = "APPROVED",
   REJECTED = "REJECTED",
+}
+
+/** 排序字段 */
+export enum BlogListDtoSortByEnum {
+  CreatedAt = "created_at",
+  UpdatedAt = "updated_at",
+  ViewCount = "view_count",
+  ReadingTime = "reading_time",
+  SortOrder = "sort_order",
+}
+
+/** 排序方向 */
+export enum BlogListDtoSortOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
 }
 
 /**
@@ -747,7 +923,18 @@ export enum StatusEnum {
   DRAFT = "DRAFT",
 }
 
-export type ProductControllerGetProductListData = any;
+export type ProductControllerGetProductListData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: ProductListDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
 
 /** 价格排序 */
 export enum ProductControllerGetProductListParams1PriceOrderEnum {
@@ -774,15 +961,23 @@ export enum ProductControllerGetProductListParams1StatusEnum {
   DRAFT = "DRAFT",
 }
 
-export type ProductControllerGetProductDetailData = any;
+export type ProductControllerGetProductDetailData = MessageDto & {
+  data?: ProductDetailDto;
+};
 
-export type ProductControllerIncrementProductViewData = any;
+export type ProductControllerIncrementProductViewData = MessageDto & {
+  data?: ProductViewDto;
+};
 
 export type ProductControllerGetProductMediaData = any;
 
-export type ProductControllerCreateProductData = any;
+export type ProductControllerCreateProductData = MessageDto & {
+  data?: ProductCreateDto;
+};
 
-export type ProductControllerUpdateProductData = any;
+export type ProductControllerUpdateProductData = MessageDto & {
+  data?: ProductUpdateDto;
+};
 
 export type ProductControllerDeleteProductData = any;
 
@@ -826,6 +1021,35 @@ export type ProductControllerCreateCategoryData = any;
 export type ProductControllerUpdateCategoryData = any;
 
 export type ProductControllerDeleteCategoryData = any;
+
+export interface ProductControllerGetProductAttributesParams {
+  /**
+   * 页码
+   * @default 1
+   */
+  page?: number;
+  /**
+   * 每页条数
+   * @default 20
+   */
+  page_size?: number;
+  /** 产品ID */
+  product_id: number;
+}
+
+export type ProductControllerGetProductAttributesData = MessageDto & {
+  data?: Object;
+};
+
+export type ProductControllerCreateProductAttributeData = MessageDto & {
+  data?: Object;
+};
+
+export type ProductControllerUpdateProductAttributeData = MessageDto & {
+  data?: Object;
+};
+
+export type ProductControllerDeleteProductAttributeData = any;
 
 export interface ReviewControllerGetReviewListParams {
   /**
@@ -1023,7 +1247,18 @@ export enum SortOrderEnum {
   Desc = "desc",
 }
 
-export type BlogControllerListData = SwaggerPaginatedResponse;
+export type BlogControllerListData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: BlogListDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
 
 /** 排序字段 */
 export enum BlogControllerListParams1SortByEnum {
@@ -1040,17 +1275,29 @@ export enum BlogControllerListParams1SortOrderEnum {
   Desc = "desc",
 }
 
-export type BlogControllerFindByIdData = any;
+export type BlogControllerFindByIdData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerFindBySlugData = any;
+export type BlogControllerFindBySlugData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerCreateData = any;
+export type BlogControllerCreateData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerUpdateData = any;
+export type BlogControllerUpdateData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerDeleteData = any;
+export type BlogControllerDeleteData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerIncrementViewCountData = any;
+export type BlogControllerIncrementViewCountData = MessageDto & {
+  data?: object;
+};
 
 export interface BlogControllerListTagsParams {
   /**
@@ -1071,13 +1318,30 @@ export interface BlogControllerListTagsParams {
   search: string;
 }
 
-export type BlogControllerListTagsData = any;
+export type BlogControllerListTagsData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: BlogTagListDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
 
-export type BlogControllerCreateTagData = any;
+export type BlogControllerCreateTagData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerUpdateTagData = any;
+export type BlogControllerUpdateTagData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerDeleteTagData = any;
+export type BlogControllerDeleteTagData = MessageDto & {
+  data?: object;
+};
 
 export interface BlogControllerListCategoriesParams {
   /**
@@ -1100,15 +1364,34 @@ export interface BlogControllerListCategoriesParams {
   search: string;
 }
 
-export type BlogControllerListCategoriesData = any;
+export type BlogControllerListCategoriesData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: BlogCategoryListDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
 
-export type BlogControllerCreateCategoryData = any;
+export type BlogControllerCreateCategoryData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerUpdateCategoryData = any;
+export type BlogControllerUpdateCategoryData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerDeleteCategoryData = any;
+export type BlogControllerDeleteCategoryData = MessageDto & {
+  data?: object;
+};
 
-export type BlogControllerAdminTestData = any;
+export type BlogControllerAdminTestData = MessageDto & {
+  data?: object;
+};
 
 export type AuthControllerRegisterData = any;
 
@@ -1188,7 +1471,16 @@ export enum SortOrderEnum1 {
 }
 
 export type UserManagementControllerGetUsersData = PaginatedDto & {
-  records?: UserResponseDto[];
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: UserResponseDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
 };
 
 /** 角色筛选 */

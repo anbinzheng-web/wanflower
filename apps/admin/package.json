@@ -20,6 +20,7 @@
     "backend-api": "workspace:*",
     "bizcharts": "^4.1.23",
     "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.18",
     "nprogress": "^0.2.0",

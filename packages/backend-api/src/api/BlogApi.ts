@@ -55,7 +55,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerList
    * @summary 获取博客列表
    * @request GET:/api/blog/list
-   * @response `200` `BlogControllerListData` 获取博客列表成功
+   * @response `200` `BlogControllerListData`
    */
   blogControllerList = (
     query: BlogControllerListParams,
@@ -75,13 +75,14 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerFindById
    * @summary 根据ID获取博客详情
    * @request GET:/api/blog/{id}
-   * @response `200` `BlogControllerFindByIdData` 获取博客详情成功
+   * @response `200` `BlogControllerFindByIdData`
    * @response `404` `void` 博客不存在
    */
   blogControllerFindById = (id: string, params: RequestParams = {}) =>
     this.http.request<BlogControllerFindByIdData, void>({
       path: `/api/blog/${id}`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -91,7 +92,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerFindBySlug
    * @summary 根据slug获取博客详情
    * @request POST:/api/blog/slug
-   * @response `200` `BlogControllerFindBySlugData` 获取博客详情成功
+   * @response `200` `BlogControllerFindBySlugData`
    * @response `404` `void` 博客不存在
    */
   blogControllerFindBySlug = (data: BlogSlugDto, params: RequestParams = {}) =>
@@ -100,6 +101,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "POST",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -109,7 +111,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerCreate
    * @summary 创建博客文章
    * @request POST:/api/blog/create
-   * @response `201` `BlogControllerCreateData` 创建博客文章成功
+   * @response `200` `BlogControllerCreateData`
    * @response `400` `void` 请求参数错误
    */
   blogControllerCreate = (data: BlogCreateDto, params: RequestParams = {}) =>
@@ -118,6 +120,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "POST",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -127,7 +130,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerUpdate
    * @summary 更新博客文章
    * @request PUT:/api/blog/update
-   * @response `200` `BlogControllerUpdateData` 更新博客文章成功
+   * @response `200` `BlogControllerUpdateData`
    * @response `400` `void` 请求参数错误
    * @response `404` `void` 博客不存在
    */
@@ -137,6 +140,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "PUT",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -146,7 +150,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerDelete
    * @summary 删除博客文章
    * @request DELETE:/api/blog/delete
-   * @response `200` `BlogControllerDeleteData` 删除博客文章成功
+   * @response `200` `BlogControllerDeleteData`
    * @response `404` `void` 博客不存在
    */
   blogControllerDelete = (data: ByIdDto, params: RequestParams = {}) =>
@@ -155,6 +159,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "DELETE",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -164,13 +169,14 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerIncrementViewCount
    * @summary 增加博客浏览量
    * @request POST:/api/blog/{id}/view
-   * @response `200` `BlogControllerIncrementViewCountData` 增加浏览量成功
+   * @response `200` `BlogControllerIncrementViewCountData`
    * @response `404` `void` 博客不存在
    */
   blogControllerIncrementViewCount = (id: string, params: RequestParams = {}) =>
     this.http.request<BlogControllerIncrementViewCountData, void>({
       path: `/api/blog/${id}/view`,
       method: "POST",
+      format: "json",
       ...params,
     });
   /**
@@ -180,7 +186,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerListTags
    * @summary 获取标签列表
    * @request GET:/api/blog/tags/list
-   * @response `200` `BlogControllerListTagsData` 获取标签列表成功
+   * @response `200` `BlogControllerListTagsData`
    */
   blogControllerListTags = (
     query: BlogControllerListTagsParams,
@@ -190,6 +196,7 @@ export class BlogApi<SecurityDataType = unknown> {
       path: `/api/blog/tags/list`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -199,7 +206,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerCreateTag
    * @summary 创建标签
    * @request POST:/api/blog/tags/create
-   * @response `201` `BlogControllerCreateTagData` 创建标签成功
+   * @response `200` `BlogControllerCreateTagData`
    * @response `400` `void` 请求参数错误
    */
   blogControllerCreateTag = (
@@ -211,6 +218,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "POST",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -220,7 +228,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerUpdateTag
    * @summary 更新标签
    * @request PUT:/api/blog/tags/update
-   * @response `200` `BlogControllerUpdateTagData` 更新标签成功
+   * @response `200` `BlogControllerUpdateTagData`
    * @response `400` `void` 请求参数错误
    * @response `404` `void` 标签不存在
    */
@@ -233,6 +241,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "PUT",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -242,7 +251,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerDeleteTag
    * @summary 删除标签
    * @request DELETE:/api/blog/tags/delete
-   * @response `200` `BlogControllerDeleteTagData` 删除标签成功
+   * @response `200` `BlogControllerDeleteTagData`
    * @response `404` `void` 标签不存在
    */
   blogControllerDeleteTag = (data: ByIdDto, params: RequestParams = {}) =>
@@ -251,6 +260,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "DELETE",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -260,7 +270,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerListCategories
    * @summary 获取分类列表
    * @request GET:/api/blog/categories/list
-   * @response `200` `BlogControllerListCategoriesData` 获取分类列表成功
+   * @response `200` `BlogControllerListCategoriesData`
    */
   blogControllerListCategories = (
     query: BlogControllerListCategoriesParams,
@@ -270,6 +280,7 @@ export class BlogApi<SecurityDataType = unknown> {
       path: `/api/blog/categories/list`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -279,7 +290,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerCreateCategory
    * @summary 创建分类
    * @request POST:/api/blog/categories/create
-   * @response `201` `BlogControllerCreateCategoryData` 创建分类成功
+   * @response `200` `BlogControllerCreateCategoryData`
    * @response `400` `void` 请求参数错误
    */
   blogControllerCreateCategory = (
@@ -291,6 +302,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "POST",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -300,7 +312,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerUpdateCategory
    * @summary 更新分类
    * @request PUT:/api/blog/categories/update
-   * @response `200` `BlogControllerUpdateCategoryData` 更新分类成功
+   * @response `200` `BlogControllerUpdateCategoryData`
    * @response `400` `void` 请求参数错误
    * @response `404` `void` 分类不存在
    */
@@ -313,6 +325,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "PUT",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -322,7 +335,7 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerDeleteCategory
    * @summary 删除分类
    * @request DELETE:/api/blog/categories/delete
-   * @response `200` `BlogControllerDeleteCategoryData` 删除分类成功
+   * @response `200` `BlogControllerDeleteCategoryData`
    * @response `404` `void` 分类不存在
    */
   blogControllerDeleteCategory = (data: ByIdDto, params: RequestParams = {}) =>
@@ -331,6 +344,7 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "DELETE",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -340,12 +354,13 @@ export class BlogApi<SecurityDataType = unknown> {
    * @name BlogControllerAdminTest
    * @summary 博客模块健康检查
    * @request GET:/api/blog/admin/test
-   * @response `200` `BlogControllerAdminTestData` 博客模块运行正常
+   * @response `200` `BlogControllerAdminTestData`
    */
   blogControllerAdminTest = (params: RequestParams = {}) =>
     this.http.request<BlogControllerAdminTestData, any>({
       path: `/api/blog/admin/test`,
       method: "GET",
+      format: "json",
       ...params,
     });
 }

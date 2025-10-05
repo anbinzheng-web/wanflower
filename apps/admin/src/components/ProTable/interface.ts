@@ -4,7 +4,7 @@ import { ReactNode, RefObject } from 'react';
 import { ComponentType } from '@/components/ProForm/interface';
 
 type ActionItem = {
-  name: string
+  name?: string
   icon?: ReactNode
   text?: ReactNode
   props?: Omit<ButtonProps, 'children' | 'loading' | 'onClick'>
@@ -12,6 +12,9 @@ type ActionItem = {
   isPopconfirm?: boolean
   tooltipContent?: ReactNode
   hide?: (record: any) => boolean
+  danger?: boolean
+  type?: 'divider'
+  disabled?: boolean
 }
 
 export interface ActionsProps {

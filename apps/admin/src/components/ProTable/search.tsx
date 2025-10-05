@@ -20,20 +20,20 @@ export const Search = (props: SearchProps) => {
       <Row gutter={16} className={"flex-1"}>
         {searchList.map((item, index) => {
           const Search = Components[item.searchType] as any
-          return <Col span={5} key={index}>
+          return <Col span={4} key={index}>
             <Form.Item name={item.searchFiled || item.dataIndex} style={{ marginBottom: 16 }}>
               <Search placeholder={item.title as string} {...item.searchProps} />
             </Form.Item>
           </Col>
         })}
-        <Col span={5}>
+        {searchList.length > 0 ? <Col span={4}>
           <Space>
             <Button type="primary" htmlType='submit'>查询</Button>
-            <Button onClick={() => form.resetFields()}>取消</Button>
+            <Button onClick={() => form.resetFields()}>重置</Button>
           </Space>
-        </Col>
+        </Col> : null}
       </Row>
     </Form>
-    <Space>{props.right}</Space>
+    <Space className='mb-4'>{props.right}</Space>
   </div>
 }

@@ -13,6 +13,8 @@
 import {
   CategoryCreateDto,
   CategoryUpdateDto,
+  ProductAttributeCreateDto,
+  ProductAttributeUpdateDto,
   ProductBatchDeleteDto,
   ProductBatchUpdateStatusDto,
   ProductControllerBatchDeleteProductsData,
@@ -20,12 +22,16 @@ import {
   ProductControllerBatchUpdateProductStatusData,
   ProductControllerBatchUploadProductMediaData,
   ProductControllerCreateCategoryData,
+  ProductControllerCreateProductAttributeData,
   ProductControllerCreateProductData,
   ProductControllerDeleteCategoryData,
+  ProductControllerDeleteProductAttributeData,
   ProductControllerDeleteProductData,
   ProductControllerDeleteProductMediaData,
   ProductControllerGetCategoryListData,
   ProductControllerGetCategoryListParams,
+  ProductControllerGetProductAttributesData,
+  ProductControllerGetProductAttributesParams,
   ProductControllerGetProductDetailData,
   ProductControllerGetProductListData,
   ProductControllerGetProductListParams,
@@ -33,6 +39,7 @@ import {
   ProductControllerIncrementProductViewData,
   ProductControllerMigrateMediaToCdnData,
   ProductControllerUpdateCategoryData,
+  ProductControllerUpdateProductAttributeData,
   ProductControllerUpdateProductData,
   ProductControllerUpdateProductMediaData,
   ProductControllerUploadProductMediaData,
@@ -60,7 +67,7 @@ export class ProductApi<SecurityDataType = unknown> {
    * @name ProductControllerGetProductList
    * @summary 获取产品列表
    * @request GET:/api/product/list
-   * @response `200` `ProductControllerGetProductListData` 获取成功
+   * @response `200` `ProductControllerGetProductListData`
    */
   productControllerGetProductList = (
     query: ProductControllerGetProductListParams,
@@ -70,6 +77,7 @@ export class ProductApi<SecurityDataType = unknown> {
       path: `/api/product/list`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -79,16 +87,16 @@ export class ProductApi<SecurityDataType = unknown> {
    * @name ProductControllerGetProductDetail
    * @summary 获取产品详情
    * @request GET:/api/product/detail/{id}
-   * @response `200` `ProductControllerGetProductDetailData` 获取成功
-   * @response `404` `void` 产品不存在
+   * @response `200` `ProductControllerGetProductDetailData`
    */
   productControllerGetProductDetail = (
     id: number,
     params: RequestParams = {},
   ) =>
-    this.http.request<ProductControllerGetProductDetailData, void>({
+    this.http.request<ProductControllerGetProductDetailData, any>({
       path: `/api/product/detail/${id}`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -98,7 +106,7 @@ export class ProductApi<SecurityDataType = unknown> {
    * @name ProductControllerIncrementProductView
    * @summary 增加产品浏览量
    * @request POST:/api/product/view
-   * @response `200` `ProductControllerIncrementProductViewData` 操作成功
+   * @response `200` `ProductControllerIncrementProductViewData`
    */
   productControllerIncrementProductView = (
     data: ProductViewDto,
@@ -109,6 +117,7 @@ export class ProductApi<SecurityDataType = unknown> {
       method: "POST",
       body: data,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -137,7 +146,7 @@ export class ProductApi<SecurityDataType = unknown> {
    * @summary 创建产品
    * @request POST:/api/product/create
    * @secure
-   * @response `201` `ProductControllerCreateProductData` 创建成功
+   * @response `200` `ProductControllerCreateProductData`
    * @response `400` `void` 参数错误
    * @response `403` `void` 权限不足
    */
@@ -151,6 +160,7 @@ export class ProductApi<SecurityDataType = unknown> {
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -161,7 +171,7 @@ export class ProductApi<SecurityDataType = unknown> {
    * @summary 更新产品
    * @request PUT:/api/product/update
    * @secure
-   * @response `200` `ProductControllerUpdateProductData` 更新成功
+   * @response `200` `ProductControllerUpdateProductData`
    * @response `403` `void` 权限不足
    * @response `404` `void` 产品不存在
    */
@@ -175,6 +185,7 @@ export class ProductApi<SecurityDataType = unknown> {
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
   /**
@@ -464,6 +475,102 @@ export class ProductApi<SecurityDataType = unknown> {
   productControllerDeleteCategory = (id: number, params: RequestParams = {}) =>
     this.http.request<ProductControllerDeleteCategoryData, void>({
       path: `/api/product/category/delete/${id}`,
+      method: "DELETE",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerGetProductAttributes
+   * @summary 获取产品属性列表
+   * @request GET:/api/product/attributes
+   * @secure
+   * @response `200` `ProductControllerGetProductAttributesData`
+   * @response `400` `void` 产品不存在
+   * @response `403` `void` 权限不足
+   */
+  productControllerGetProductAttributes = (
+    query: ProductControllerGetProductAttributesParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetProductAttributesData, void>({
+      path: `/api/product/attributes`,
+      method: "GET",
+      query: query,
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerCreateProductAttribute
+   * @summary 创建产品属性
+   * @request POST:/api/product/attribute/create
+   * @secure
+   * @response `200` `ProductControllerCreateProductAttributeData`
+   * @response `400` `void` 产品不存在
+   * @response `403` `void` 权限不足
+   */
+  productControllerCreateProductAttribute = (
+    data: ProductAttributeCreateDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerCreateProductAttributeData, void>({
+      path: `/api/product/attribute/create`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerUpdateProductAttribute
+   * @summary 更新产品属性
+   * @request PUT:/api/product/attribute/update
+   * @secure
+   * @response `200` `ProductControllerUpdateProductAttributeData`
+   * @response `400` `void` 属性不存在或产品已删除
+   * @response `403` `void` 权限不足
+   */
+  productControllerUpdateProductAttribute = (
+    data: ProductAttributeUpdateDto,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerUpdateProductAttributeData, void>({
+      path: `/api/product/attribute/update`,
+      method: "PUT",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerDeleteProductAttribute
+   * @summary 删除产品属性
+   * @request DELETE:/api/product/attribute/delete/{id}
+   * @secure
+   * @response `200` `ProductControllerDeleteProductAttributeData` 删除成功
+   * @response `400` `void` 属性不存在或产品已删除
+   * @response `403` `void` 权限不足
+   */
+  productControllerDeleteProductAttribute = (
+    id: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerDeleteProductAttributeData, void>({
+      path: `/api/product/attribute/delete/${id}`,
       method: "DELETE",
       secure: true,
       ...params,
