@@ -9,6 +9,7 @@
     "admin:dev": "pnpm -F admin dev",
     "react-markdown:dev": "pnpm -F react-markdown dev",
     "openapi": "pnpm -F backend-api openapi",
+    "markdown:build": "pnpm -F react-markdown build",
     "build:pkg": "pnpm -F \"./packages/**\" build",
     "postinstall": "npm run build:pkg"
   },

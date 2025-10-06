@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown表格测试</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/remark@15/dist/remark.min.js"></script>
+    <script src="https://unpkg.com/remark-gfm@4/dist/remark-gfm.min.js"></script>
+    <script src="https://unpkg.com/remark-rehype@11/dist/remark-rehype.min.js"></script>
+    <script src="https://unpkg.com/rehype-react@8/dist/rehype-react.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { createElement, Fragment } = React;
+        
+        // 模拟我们的组件
+        const components = {
+            table: (props) => (
+                <div className="overflow-x-auto mb-4">
+                    <table className="min-w-full border border-gray-300" {...props} />
+                </div>
+            ),
+            thead: (props) => <thead className="bg-gray-50" {...props} />,
+            tbody: (props) => <tbody {...props} />,
+            tr: (props) => <tr className="border-b border-gray-200" {...props} />,
+            th: (props) => (
+                <th className="px-4 py-2 text-left font-semibold text-gray-900" {...props} />
+            ),
+            td: (props) => <td className="px-4 py-2 text-gray-700" {...props} />,
+            p: (props) => <p className="mb-4 leading-relaxed" {...props} />,
+        };
+        
+        // 测试Markdown
+        const testMarkdown = `
+# 表格测试
+
+这是一个测试表格：
+
+| 列1 | 列2 | 列3 |
+|-----|-----|-----|
+| 数据1 | 数据2 | 数据3 |
+| 数据4 | 数据5 | 数据6 |
+
+普通段落文本。
+        `;
+        
+        // 渲染函数
+        async function renderMarkdown(md) {
+            try {
+                const remark = window.remark;
+                const remarkGfm = window.remarkGfm;
+                const remarkRehype = window.remarkRehype;
+                const rehypeReact = window.rehypeReact;
+                
+                const result = await remark()
+                    .use(remarkGfm)
+                    .use(remarkRehype)
+                    .use(rehypeReact, {
+                        createElement,
+                        Fragment,
+                        components
+                    })
+                    .process(md);
+                
+                return result.result;
+            } catch (error) {
+                console.error('渲染错误:', error);
+                return <div>渲染错误: {error.message}</div>;
+            }
+        }
+        
+        // 主组件
+        function App() {
+            const [content, setContent] = React.useState(null);
+            
+            React.useEffect(() => {
+                renderMarkdown(testMarkdown).then(setContent);
+            }, []);
+            
+            return (
+                <div className="p-8">
+                    <h1 className="text-2xl font-bold mb-4">Markdown表格渲染测试</h1>
+                    <div className="prose max-w-none">
+                        {content || <div>加载中...</div>}
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

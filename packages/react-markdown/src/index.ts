@@ -1,4 +1,5 @@
 import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
 import remarkRehype from "remark-rehype";
 import rehypeReact from "rehype-react";
 import { components } from './react-components';
@@ -10,6 +11,7 @@ import { jsx, jsxs } from 'react/jsx-runtime';
 
 export const renderReactMarkdown = (md: string) => {
   return remark()
+    .use(remarkGfm) // 支持GitHub风格的Markdown，包括表格
     .use(remarkTocJson)
     .use(remarkRehype) // 先转 HAST
     .use(rehypeLinkAttr) // 在 HAST 层改属性
