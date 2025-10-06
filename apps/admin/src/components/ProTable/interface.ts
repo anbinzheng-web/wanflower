@@ -51,6 +51,6 @@ export interface ProTableProps extends Omit<TableProps, 'columns' | 'noDataEleme
   handleAction?: ActionsProps['handleAction']
   actions?: ActionsProps['actions']
   renderAction?: ColumnType['render']
-  searchRight?: ReactNode
+  toolBar?: ReactNode
   ref?: RefObject<ProTableRef>
 }

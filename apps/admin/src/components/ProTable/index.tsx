@@ -14,7 +14,7 @@ export const ProTable = (props: ProTableProps) => {
     dataSource, 
     renderAction, 
     actions,
-    searchRight, 
+    toolBar, 
     ref,
     ...rest 
   } = props;
@@ -40,7 +40,7 @@ export const ProTable = (props: ProTableProps) => {
     })
       .then((result) => {
         if (result.code === 0) {
-          setTableData(result.data.records);
+          setTableData(Array.isArray(result.data) ? result.data : result.data.records);
           // 分页器的数据
         } else {
           setErrorMessage(result.message);
@@ -98,7 +98,7 @@ export const ProTable = (props: ProTableProps) => {
 
   return <Provider setParams={setParams} params={params} request={fetchData}>
     <div className='bg-white p-4'>
-      <Search columns={columns} right={searchRight} />
+      <Search columns={columns} right={toolBar} />
       <Table 
         rowKey={"id"}
         {...rest} 

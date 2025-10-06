@@ -1,6 +1,14 @@
 import auth, { AuthParams } from '@/utils/authentication';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { FileOutlined, GiftOutlined, UserOutlined } from '@ant-design/icons';
+import { 
+  FileTextOutlined, 
+  ShoppingOutlined, 
+  UserOutlined, 
+  ShoppingCartOutlined, 
+  AppstoreOutlined,
+  UnorderedListOutlined,
+  TagsOutlined
+} from '@ant-design/icons';
 
 export type IRoute = AuthParams & {
   name: string;
@@ -17,16 +25,18 @@ export const routes: IRoute[] = [
   {
     name: '产品管理',
     key: 'product',
-    icon: <GiftOutlined />,
+    icon: <AppstoreOutlined />,
     children: [
       {
         name: '产品列表',
         key: 'product/list',
+        icon: <UnorderedListOutlined />,
         // requiredPermissions: [{ resource: 'product', actions: ['read'] }]
       },
       {
         name: '产品分类',
         key: 'product/category',
+        icon: <TagsOutlined />,
         // requiredPermissions: [{ resource: 'product', actions: ['read'] }]
       }
     ]
@@ -34,7 +44,24 @@ export const routes: IRoute[] = [
   {
     name: '博客文章',
     key: 'blog',
-    icon: <FileOutlined />
+    icon: <FileTextOutlined />
+  },
+  {
+    name: '订单管理',
+    key: 'order',
+    icon: <ShoppingOutlined />,
+    children: [
+      {
+        name: '订单列表',
+        key: 'order/list',
+        icon: <UnorderedListOutlined />,
+      },
+      {
+        name: '购物车管理',
+        key: 'order/cart',
+        icon: <ShoppingCartOutlined />,
+      }
+    ]
   },
   {
     name: '用户管理',

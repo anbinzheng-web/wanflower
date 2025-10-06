@@ -5,6 +5,7 @@ import React from 'react'
 export const Components = {
   Input,
   InputNumber,
+  Textarea: Input.TextArea,
   Select,
   Upload,
   TreeSelect,
@@ -17,7 +18,7 @@ export const Components = {
   DatePicker,
   ColorPicker,
   Checkbox,
-  AutoComplete
+  AutoComplete,
 }
 
 export type ComponentType = keyof typeof Components

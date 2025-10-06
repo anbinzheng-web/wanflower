@@ -2,11 +2,11 @@
 alwaysApply: true
 ---
 
-# 万花电商管理后台 - Cursor Rules
+# 万花跨境电商管理后台 - Cursor Rules
 
 ## 项目概述
 
-基于 **React 19 + TypeScript + Vite + Ant Design + Tailwind CSS** 的电商管理后台项目。
+基于 **React 19 + TypeScript + Vite + Ant Design + Tailwind CSS** 的跨境电商管理后台项目。
 
 ## 技术栈
 
@@ -31,7 +31,7 @@ src/
 ├── hooks/        # 自定义 hooks
 ├── store/        # 状态管理
 └── types/        # TypeScript 类型定义
-└── globalProperties.ts        # 全局挂载方法，一些非常方便的方法，例如 dayjs 等。公共方法优先从这里面找
+└── globalProperties.ts        # 全局挂载方法，一些非常方便的方法，例如 dayjs 等。无须导入即可使用
 ```
 
 ---
@@ -47,15 +47,26 @@ src/
 * 样式必须使用 **Tailwind CSS 类名**（响应式设计用 sm:/md:/lg:/xl: 前缀）
 * 不允许使用 `style` 内联样式或 `class` 属性，必须用 `className`
 
+### 现有组件说明
+* @/components/ProForm 内部封装了 Antd Form ，采用 schemas 的设计模式，JSON 的形式直接配置表单即可，无需手动去写一个个表单
+* @/components/ProTable 内部封装了 Antd Table，包含了搜索功能
+* @/hooks/useModal 内部封装了 Antd Modal，命令式打开弹窗
+* @/hooks/useFormModal 封装了 Antd Modal 和 @/components/ProForm 的功能，用于快速创建 Form + Modal 的需求
+* @/hooks/useFullModal 自行实现的全屏弹窗，功能类似于 useModal ，用于弹窗内容较多，且比较复杂时使用
+* @/hooks/useFullFormModal 基于 useFullModal 封装出来的弹窗表单版本，当表单数量比较多的时候，应该使用此组件
+
+以上这些组件满足了几乎所有的管理后台的需求，所有的业务场景必须优先使用以上已封装好的组件，不可直接使用 Antd 中对应的组件！！！
+
 ### API 调用
 
 * 通过 `@/api` 客户端调用（已内置 token 注入 & 错误拦截器）
-* 成功与失败提示统一使用 `$message`（已在 `globalProperties.ts` 注册）
+* 成功与失败提示统一使用 `$message`（已在 window 全局对象上挂载，无需额外的导入，即可使用）
 
 ### 错误处理 & 表单
 
 * 表单统一使用封装好的 `ProForm`（不要直接使用 antd Form）
-* Modal、Table 等也需优先使用已封装版本
+* 表单统一使用封装好的 `useModal` `useFormModal` `useFullModal` `useFullFormModal`（不要直接使用 antd Form 或 Modal）
+# 表格全部使用 ProTable 不允许自行使用搜索，因为 ProTable 已经实现，只需简单的配置即可
 
 ---
 
@@ -80,50 +91,39 @@ src/
 
 ## 示例代码
 
-### 组件定义
+### 基本用法
 
 ```tsx
-import { ProForm, useSchemas } from '@/components/ProForm'; 
+import { ProTable, defineColumns } from '@/components/ProTable';
 
-interface ComponentProps {
-  title: string;
-  onSubmit: (values: any) => void;
-}
-
-const MyComponent = ({ title, onSubmit }: ComponentProps) => {
-  const schemas = useSchemas([
-    { field: 'name', label: '名称', component: 'Input' }
-  ]);
-  
-  return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
-      <ProForm schemas={schemas} onFinish={onSubmit} />
-    </div>
-  );
-};
-
-export default MyComponent;
-```
-
-### Table 组件
-
-```tsx
-import { ProTable, defineColumns } from '@/components/ProTable'; 
-import { EditOutlined, DeleteOutlined, KeyOutlined } from '@ant-design/icons';
-
-const MyComponent = () => {
-  const columns = [
+export default function MyPage() {
+  // 定义表格列
+  const columns = defineColumns([
     {
-      title: '标题',
-      dataIndex: 'title'
+      title: 'ID',
+      dataIndex: 'id',
+      sorter: true
     },
     {
-      title: '文章内容',
-      dataIndex: 'content'
+      title: '名称',
+      dataIndex: 'name',
+      searchType: 'Input' // 支持搜索
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render: (status) => <Tag color="green">{status}</Tag>,
+      searchType: 'Select',
+      searchProps: {
+        options: [
+          { label: '启用', value: 'active' },
+          { label: '禁用', value: 'inactive' }
+        ]
+      }
     }
-  ]
+  ]);
 
+  // 定义操作按钮
   const actions = [
     {
       name: 'edit',
@@ -134,60 +134,365 @@ const MyComponent = () => {
       name: 'delete',
       icon: <DeleteOutlined />,
       text: '删除',
-      danger: true
+      danger: true,
+      collapsed: true // 折叠到下拉菜单
     },
     {
-      name: 'resetPassword',
-      icon: <KeyOutlined />,
-      text: '重置密码'
+      name: 'view',
+      icon: <EyeOutlined />,
+      hide: (record) => record.status === 'inactive' // 根据条件隐藏
     }
-  ]
+  ];
 
-  const handleAction = async (name, record) => {
+  // 处理操作事件
+  const handleAction = async (name: string, record: any) => {
     switch (name) {
       case 'edit':
-        // ... handle edit
+        // 编辑逻辑
         break;
       case 'delete':
-        // ... handle delete
+        // 删除逻辑
         break;
-      case 'resetPassword':
-        // ... handle resetPassword
+      case 'view':
+        // 查看逻辑
         break;
       default:
         console.warn('未知操作:', name, record);
     }
-  }
-  
-  return (
-    <ProTable columns={columns} actions={actions} handleAction={handleAction}></ProTable>
-  );
-};
+  };
 
-export default MyComponent;
+  return (
+    <ProTable
+      columns={columns}
+      actions={actions}
+      handleAction={handleAction} // 必须传递handleAction
+      request={API.myControllerGetList}
+      toolBar={<Button type="primary">新增</Button>}
+    />
+  );
+}
 ```
 
+### 重要规则
 
-### API 调用
+1. **禁止在actions中使用onClick**：所有操作都应该通过`handleAction`函数处理
+2. **必须传递handleAction参数**：ProTable组件需要这个参数来处理操作
+3. **使用hide属性控制按钮显示**：不要用onClick中的条件判断来控制按钮显示
+4. **使用collapsed属性控制折叠**：将次要操作折叠到下拉菜单中
+
+### 操作按钮配置
 
 ```tsx
-import { API } from '@/api';
-
-const handleSubmit = async (values: any) => {
-  try {
-    await API.auth.authControllerLogin(values);
-    $message.success('操作成功');
-  } catch {
-    $message.error('操作失败');
+const actions = [
+  {
+    name: 'edit',                    // 操作名称，用于handleAction中识别
+    icon: <EditOutlined />,          // 图标
+    text: '编辑',                    // 按钮文字
+    danger: false,                   // 是否为危险操作（红色）
+    collapsed: false,                // 是否折叠到下拉菜单
+    hide: (record) => false,         // 是否隐藏按钮
+    disabled: false,                 // 是否禁用
+    props: {                         // 额外的Button属性
+      size: 'small'
+    }
   }
-};
+];
 ```
 
+### 搜索功能
+
+```tsx
+const columns = defineColumns([
+  {
+    title: '名称',
+    dataIndex: 'name',
+    searchType: 'Input',             // 搜索类型
+    searchDefaultValue: '默认值',     // 搜索默认值
+    searchProps: {                   // 搜索组件属性
+      placeholder: '请输入名称'
+    }
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    searchType: 'Select',
+    searchProps: {
+      options: [
+        { label: '启用', value: 'active' },
+        { label: '禁用', value: 'inactive' }
+      ]
+    }
+  }
+]);
+```
+
+### 工具栏
+
+```tsx
+<ProTable
+  toolBar={
+    <Space>
+      <Button type="primary" icon={<PlusOutlined />}>
+        新增
+      </Button>
+      <Button icon={<ReloadOutlined />}>
+        刷新
+      </Button>
+    </Space>
+  }
+/>
+```
+
+## ProForm 组件使用规范
+
+### 基本用法
+
+```tsx
+import { ProForm, defineSchemas } from '@/components/ProForm';
+
+const schemas = defineSchemas([
+  {
+    name: 'name',
+    label: '名称',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入名称'
+    },
+    rules: [
+      { required: true, message: '请输入名称' },
+      { min: 2, max: 50, message: '名称长度为2-50个字符' }
+    ]
+  },
+  {
+    name: 'status',
+    label: '状态',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { label: '启用', value: 'active' },
+        { label: '禁用', value: 'inactive' }
+      ]
+    },
+    rules: [{ required: true, message: '请选择状态' }]
+  }
+]);
+
+<ProForm
+  schemas={schemas}
+  onFinish={async (values) => {
+    // 处理提交
+    return true; // 返回true表示成功，false表示失败
+  }}
+/>
+```
+
+### 支持的组件类型
+
+- `Input` - 输入框
+- `Textarea` - 文本域
+- `Select` - 下拉选择
+- `Radio` - 单选框
+- `Checkbox` - 复选框
+- `DatePicker` - 日期选择器
+- `TimePicker` - 时间选择器
+- `InputNumber` - 数字输入框
+- `Switch` - 开关
+- `Upload` - 文件上传
+
+### 表单验证
+
+```tsx
+const schemas = defineSchemas([
+  {
+    name: 'email',
+    label: '邮箱',
+    component: 'Input',
+    rules: [
+      { required: true, message: '请输入邮箱' },
+      { type: 'email', message: '请输入有效的邮箱地址' },
+      {
+        validator: async (_, value) => {
+          // 异步验证
+          const exists = await checkEmailExists(value);
+          if (exists) {
+            return Promise.reject(new Error('邮箱已存在'));
+          }
+          return Promise.resolve();
+        }
+      }
+    ]
+  }
+]);
+```
+
+## useFormModal Hook 使用规范
+
+### 基本用法
+
+```tsx
+import { useFormModal } from '@/hooks/useFormModal';
+
+export default function MyPage() {
+  const showFormModal = useFormModal();
+
+  const handleEdit = (record) => {
+    showFormModal({
+      title: '编辑用户',
+      schemas: editSchemas,
+      initialValues: record,
+      onOk: async (values) => {
+        // 处理提交
+        const result = await API.updateUser(record.id, values);
+        return result.code === 0; // 返回true表示成功
+      },
+      width: 600
+    });
+  };
+
+  return (
+    <Button onClick={() => handleEdit(record)}>
+      编辑
+    </Button>
+  );
+}
+```
+
+### 参数说明
+
+```tsx
+showFormModal({
+  title: '标题',                    // 弹窗标题
+  schemas: schemas,                 // 表单配置
+  initialValues: {},                // 初始值
+  onOk: async (values) => {         // 提交处理
+    return true; // 成功返回true，失败返回false
+  },
+  width: 600,                       // 弹窗宽度
+  okText: '确定',                   // 确定按钮文字
+  cancelText: '取消'                // 取消按钮文字
+});
+```
+
+## useModal Hook 使用规范
+
+### 基本用法
+
+```tsx
+import { useModal } from '@/hooks/useModal';
+
+export default function MyPage() {
+  const showModal = useModal();
+
+  const handleView = (record) => {
+    showModal({
+      title: '查看详情',
+      content: <div>详情内容</div>,
+      width: 800
+    });
+  };
+}
+```
+
+## 全局方法使用规范
+
+### 消息提示
+
+```tsx
+// 成功提示
+globalThis.$message.success('操作成功');
+
+// 错误提示
+globalThis.$message.error('操作失败');
+
+// 警告提示
+globalThis.$message.warning('请注意');
+
+// 信息提示
+globalThis.$message.info('提示信息');
+```
+
+### 日期格式化
+
+```tsx
+// 格式化日期
+const formattedDate = globalThis.$formatDate('2024-01-01T10:30:00Z');
+// 输出: 2024-01-01 10:30:00
+```
+
+### 确认对话框
+
+```tsx
+import { Modal } from 'antd';
+
+Modal.confirm({
+  title: '确认删除',
+  content: '确定要删除这条记录吗？',
+  onOk: async () => {
+    // 删除逻辑
+  }
+});
+```
+
+## 常见错误和解决方案
+
+### ❌ 错误用法
+
+```tsx
+// 错误：在actions中使用onClick
+const actions = [
+  {
+    name: 'edit',
+    icon: <EditOutlined />,
+    onClick: (record) => { // ❌ 不要这样做
+      // 处理逻辑
+    }
+  }
+];
+
+// 错误：忘记传递handleAction
+<ProTable
+  columns={columns}
+  actions={actions}
+  // ❌ 缺少 handleAction={handleAction}
+/>
+```
+
+### ✅ 正确用法
+
+```tsx
+// 正确：使用handleAction处理所有操作
+const actions = [
+  {
+    name: 'edit',
+    icon: <EditOutlined />,
+    // 不定义onClick
+  }
+];
+
+const handleAction = async (name: string, record: any) => {
+  switch (name) {
+    case 'edit':
+      // 处理编辑逻辑
+      break;
+  }
+};
+
+<ProTable
+  columns={columns}
+  actions={actions}
+  handleAction={handleAction} // ✅ 正确传递
+/>
+```
+
+## 最佳实践
+
+1. **统一使用handleAction**：所有表格操作都通过handleAction处理
+2. **合理使用hide属性**：根据记录状态动态显示/隐藏按钮
+3. **使用collapsed属性**：将次要操作折叠到下拉菜单
+4. **异步操作返回Promise**：确保操作完成后才关闭loading状态
+5. **统一错误处理**：使用globalThis.$message显示操作结果
+6. **表单验证**：充分利用ProForm的验证功能
+7. **类型安全**：为handleAction函数添加正确的类型定义
+8. **管理后台无需任何文档说明**
+
 ---
-
-✅ **记住**：
-
-* **先用现有组件 → 再考虑 AntD → 最后才自定义**
-* **所有样式必须用 Tailwind**
-* **统一用 $message & ProForm**
-* **管理后台无需任何文档说明**

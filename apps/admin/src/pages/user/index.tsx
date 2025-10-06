@@ -195,7 +195,7 @@ export default function User() {
       request={API.users.userManagementControllerGetUsers}
       actions={actions}
       handleAction={handleAction}
-      searchRight={<Button type='primary' onClick={showCreateModal}>创建用户</Button>}
+      toolBar={<Button type='primary' onClick={showCreateModal}>创建用户</Button>}
       pagination={{
         showSizeChanger: true,
         showQuickJumper: true,

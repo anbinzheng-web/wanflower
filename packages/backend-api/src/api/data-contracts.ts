@@ -737,6 +737,417 @@ export interface ResetUserPasswordDto {
   password: string;
 }
 
+export interface OrderWithDetailsDto {
+  /**
+   * 订单ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 订单号
+   * @example "ORD202401010001"
+   */
+  order_number: string;
+  /**
+   * 用户ID
+   * @example 1
+   */
+  user_id: number;
+  /**
+   * 订单状态
+   * @example "PENDING"
+   */
+  status: string;
+  /**
+   * 商品小计
+   * @example 100
+   */
+  subtotal: number;
+  /**
+   * 运费
+   * @example 10
+   */
+  shipping_fee: number;
+  /**
+   * 税费
+   * @example 5
+   */
+  tax_amount: number;
+  /**
+   * 折扣金额
+   * @example 0
+   */
+  discount_amount: number;
+  /**
+   * 总金额
+   * @example 115
+   */
+  total_amount: number;
+  /** 收货地址 */
+  shipping_address: Record<string, any>;
+  /**
+   * 支付方式
+   * @example "alipay"
+   */
+  payment_method: string;
+  /**
+   * 支付状态
+   * @example "PENDING"
+   */
+  payment_status: string;
+  /**
+   * 第三方支付ID
+   * @example "pay_123456789"
+   */
+  payment_id: string;
+  /**
+   * 支付时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  paid_at: string;
+  /**
+   * 物流方式
+   * @example "express"
+   */
+  shipping_method: string;
+  /**
+   * 物流单号
+   * @example "SF1234567890"
+   */
+  tracking_number: string;
+  /**
+   * 发货时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  shipped_at: string;
+  /**
+   * 签收时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  delivered_at: string;
+  /**
+   * 客户备注
+   * @example "请小心轻放"
+   */
+  customer_notes: string;
+  /**
+   * 管理员备注
+   * @example "客户要求加急处理"
+   */
+  admin_notes: string;
+  /**
+   * 创建时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  created_at: string;
+  /**
+   * 更新时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  updated_at: string;
+  /** 订单项列表 */
+  items: any[];
+  /** 用户信息 */
+  user: Record<string, any>;
+}
+
+export interface ShippingAddressDto {
+  /**
+   * 收货人姓名
+   * @example "John Smith"
+   */
+  name: string;
+  /**
+   * 收货人电话（国际格式）
+   * @example "+86 138 0013 8000"
+   */
+  phone: string;
+  /**
+   * 公司名称
+   * @example "ABC Company Ltd."
+   */
+  company?: string;
+  /**
+   * 国家（ISO 3166-1 alpha-2 代码）
+   * @example "CN"
+   */
+  country: string;
+  /**
+   * 省/州/大区
+   * @example "Guangdong"
+   */
+  province: string;
+  /**
+   * 城市
+   * @example "Shenzhen"
+   */
+  city: string;
+  /**
+   * 区/县/郡
+   * @example "Nanshan District"
+   */
+  district?: string;
+  /**
+   * 邮政编码/邮编
+   * @example "518000"
+   */
+  postal_code?: string;
+  /**
+   * 地址第一行（街道、门牌号等）
+   * @example "123 Main Street"
+   */
+  address_line_1: string;
+  /**
+   * 地址第二行（公寓号、楼层等）
+   * @example "Apt 456, Floor 2"
+   */
+  address_line_2?: string;
+  /**
+   * 地址第三行（特殊说明等）
+   * @example "Building B, Near Metro Station"
+   */
+  address_line_3?: string;
+}
+
+export interface OrderItemDto {
+  /**
+   * 商品ID
+   * @example 1
+   */
+  product_id: number;
+  /**
+   * 商品数量
+   * @example 2
+   */
+  quantity: number;
+}
+
+export interface CreateOrderDto {
+  /**
+   * 用户ID（管理员代下单时使用）
+   * @example 1
+   */
+  user_id?: number;
+  /** 收货地址 */
+  shipping_address: ShippingAddressDto;
+  /** 订单项列表 */
+  items: OrderItemDto[];
+  /**
+   * 客户备注
+   * @example "请小心轻放"
+   */
+  customer_notes?: string;
+  /**
+   * 支付方式
+   * @example "alipay"
+   */
+  payment_method?: string;
+  /**
+   * 物流方式
+   * @example "express"
+   */
+  shipping_method?: string;
+}
+
+export interface OrderStatsDto {
+  /**
+   * 总订单数
+   * @example 100
+   */
+  total_orders: number;
+  /**
+   * 总金额
+   * @example 10000
+   */
+  total_amount: number;
+  /**
+   * 待付款订单数
+   * @example 10
+   */
+  pending_orders: number;
+  /**
+   * 已付款订单数
+   * @example 20
+   */
+  paid_orders: number;
+  /**
+   * 已发货订单数
+   * @example 30
+   */
+  shipped_orders: number;
+  /**
+   * 已完成订单数
+   * @example 25
+   */
+  completed_orders: number;
+  /**
+   * 已取消订单数
+   * @example 5
+   */
+  cancelled_orders: number;
+  /**
+   * 已退款订单数
+   * @example 2
+   */
+  refunded_orders: number;
+}
+
+export interface UpdateOrderDto {
+  /** 订单状态 */
+  status?: UpdateOrderDtoStatusEnum;
+  /** 支付状态 */
+  payment_status?: UpdateOrderDtoPaymentStatusEnum;
+  /**
+   * 第三方支付ID
+   * @example "pay_123456789"
+   */
+  payment_id?: string;
+  /**
+   * 支付时间
+   * @example "2024-01-01T10:00:00Z"
+   */
+  paid_at?: string;
+  /**
+   * 物流方式
+   * @example "express"
+   */
+  shipping_method?: string;
+  /**
+   * 物流单号
+   * @example "SF1234567890"
+   */
+  tracking_number?: string;
+  /**
+   * 发货时间
+   * @example "2024-01-01T10:00:00Z"
+   */
+  shipped_at?: string;
+  /**
+   * 签收时间
+   * @example "2024-01-01T10:00:00Z"
+   */
+  delivered_at?: string;
+  /**
+   * 管理员备注
+   * @example "客户要求加急处理"
+   */
+  admin_notes?: string;
+}
+
+export interface ConfirmPaymentDto {
+  /**
+   * 支付方式
+   * @example "BANK_TRANSFER"
+   */
+  payment_method: ConfirmPaymentDtoPaymentMethodEnum;
+  /**
+   * 支付金额
+   * @example 299.99
+   */
+  amount: number;
+  /**
+   * 第三方支付ID（如Stripe Payment Intent ID）
+   * @example "pi_1234567890abcdef"
+   */
+  payment_id: string;
+  /**
+   * 支付时间
+   * @example "2024-01-15T10:30:00Z"
+   */
+  paid_at: string;
+  /**
+   * 支付备注
+   * @example "银行转账，交易号：123456789"
+   */
+  payment_notes?: string;
+  /**
+   * 交易凭证号
+   * @example "TXN20240115001"
+   */
+  transaction_reference?: string;
+  /**
+   * 银行名称（银行转账时使用）
+   * @example "中国工商银行"
+   */
+  bank_name?: string;
+  /**
+   * 账户后四位（银行转账时使用）
+   * @example "1234"
+   */
+  account_last_four?: string;
+}
+
+export interface CartResponseDto {
+  /**
+   * 购物车ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 用户ID
+   * @example 1
+   */
+  user_id: number;
+  /** 购物车项列表 */
+  items: any[];
+  /**
+   * 创建时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  created_at: string;
+  /**
+   * 更新时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  updated_at: string;
+}
+
+export interface CartItemDto {
+  /**
+   * 商品ID
+   * @example 1
+   */
+  product_id: number;
+  /**
+   * 商品数量
+   * @example 2
+   */
+  quantity: number;
+}
+
+export interface UpdateCartItemDto {
+  /**
+   * 商品数量
+   * @example 3
+   */
+  quantity: number;
+}
+
+export interface CartCountResponseDto {
+  /**
+   * 购物车商品数量
+   * @example 5
+   */
+  count: number;
+}
+
+export interface CartValidationResponseDto {
+  /**
+   * 是否有效
+   * @example true
+   */
+  valid: boolean;
+  /** 无效商品列表 */
+  invalidItems: any[];
+}
+
 /** 价格排序 */
 export enum ProductListDtoPriceOrderEnum {
   Asc = "asc",
@@ -869,6 +1280,43 @@ export enum UpdateUserRoleDtoRoleEnum {
   Admin = "admin",
 }
 
+/** 订单状态 */
+export enum UpdateOrderDtoStatusEnum {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  PROCESSING = "PROCESSING",
+  SHIPPED = "SHIPPED",
+  DELIVERED = "DELIVERED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  REFUNDED = "REFUNDED",
+}
+
+/** 支付状态 */
+export enum UpdateOrderDtoPaymentStatusEnum {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  CANCELLED = "CANCELLED",
+}
+
+/**
+ * 支付方式
+ * @example "BANK_TRANSFER"
+ */
+export enum ConfirmPaymentDtoPaymentMethodEnum {
+  CASH = "CASH",
+  BANK_TRANSFER = "BANK_TRANSFER",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  CHECK = "CHECK",
+  STRIPE = "STRIPE",
+  PAYPAL = "PAYPAL",
+  ALIPAY = "ALIPAY",
+  WECHAT_PAY = "WECHAT_PAY",
+  OTHER = "OTHER",
+}
+
 export interface ProductControllerGetProductListParams {
   /**
    * 页码
@@ -962,6 +1410,10 @@ export enum ProductControllerGetProductListParams1StatusEnum {
 }
 
 export type ProductControllerGetProductDetailData = MessageDto & {
+  data?: ProductDetailDto;
+};
+
+export type ProductControllerGetProductBySkuData = MessageDto & {
   data?: ProductDetailDto;
 };
 
@@ -1515,6 +1967,10 @@ export type UserManagementControllerDeleteUserData = MessageDto & {
   data?: object;
 };
 
+export type UserManagementControllerGetUserByEmailData = MessageDto & {
+  data?: UserResponseDto;
+};
+
 export type UserManagementControllerUpdateUserStatusData = MessageDto & {
   data?: object;
 };
@@ -1554,3 +2010,214 @@ export interface UserActivityControllerGetInactiveUsersParams {
 export type UserActivityControllerGetInactiveUsersData = any;
 
 export type UserActivityControllerGetActivityDistributionData = any;
+
+export type OrderControllerCreateOrderData = MessageDto & {
+  data?: OrderWithDetailsDto;
+};
+
+export interface OrderControllerGetOrdersParams {
+  /**
+   * 用户ID
+   * @example 1
+   */
+  user_id?: number;
+  /** 订单状态 */
+  status?: StatusEnum3;
+  /** 支付状态 */
+  payment_status?: PaymentStatusEnum;
+  /**
+   * 订单号
+   * @example "ORD202401010001"
+   */
+  order_number?: string;
+  /**
+   * 开始日期
+   * @example "2024-01-01"
+   */
+  start_date?: string;
+  /**
+   * 结束日期
+   * @example "2024-12-31"
+   */
+  end_date?: string;
+  /**
+   * 页码
+   * @min 1
+   * @example 1
+   */
+  page?: number;
+  /**
+   * 每页数量
+   * @min 1
+   * @max 100
+   * @example 10
+   */
+  page_size?: number;
+  /**
+   * 排序字段
+   * @example "created_at"
+   */
+  sort_by?: SortByEnum2;
+  /**
+   * 排序顺序
+   * @example "desc"
+   */
+  sort_order?: SortOrderEnum2;
+}
+
+/** 订单状态 */
+export enum StatusEnum3 {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  PROCESSING = "PROCESSING",
+  SHIPPED = "SHIPPED",
+  DELIVERED = "DELIVERED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  REFUNDED = "REFUNDED",
+}
+
+/** 支付状态 */
+export enum PaymentStatusEnum {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  CANCELLED = "CANCELLED",
+}
+
+/**
+ * 排序字段
+ * @example "created_at"
+ */
+export enum SortByEnum2 {
+  CreatedAt = "created_at",
+  TotalAmount = "total_amount",
+  OrderNumber = "order_number",
+}
+
+/**
+ * 排序顺序
+ * @example "desc"
+ */
+export enum SortOrderEnum2 {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+export type OrderControllerGetOrdersData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: OrderWithDetailsDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
+
+/** 订单状态 */
+export enum OrderControllerGetOrdersParams1StatusEnum {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  PROCESSING = "PROCESSING",
+  SHIPPED = "SHIPPED",
+  DELIVERED = "DELIVERED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  REFUNDED = "REFUNDED",
+}
+
+/** 支付状态 */
+export enum OrderControllerGetOrdersParams1PaymentStatusEnum {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  CANCELLED = "CANCELLED",
+}
+
+/**
+ * 排序字段
+ * @example "created_at"
+ */
+export enum OrderControllerGetOrdersParams1SortByEnum {
+  CreatedAt = "created_at",
+  TotalAmount = "total_amount",
+  OrderNumber = "order_number",
+}
+
+/**
+ * 排序顺序
+ * @example "desc"
+ */
+export enum OrderControllerGetOrdersParams1SortOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+export type OrderControllerGetOrderStatsData = MessageDto & {
+  data?: OrderStatsDto;
+};
+
+export type OrderControllerGetOrderByIdData = MessageDto & {
+  data?: OrderWithDetailsDto;
+};
+
+export type OrderControllerUpdateOrderData = MessageDto & {
+  data?: OrderWithDetailsDto;
+};
+
+export type OrderControllerDeleteOrderData = MessageDto & {
+  data?: object;
+};
+
+export type OrderControllerCancelOrderData = MessageDto & {
+  data?: OrderWithDetailsDto;
+};
+
+export type OrderControllerConfirmOfflinePaymentData = MessageDto & {
+  data?: OrderWithDetailsDto;
+};
+
+export type CartControllerGetCartData = MessageDto & {
+  data?: CartResponseDto;
+};
+
+export type CartControllerAddToCartData = MessageDto & {
+  data?: CartResponseDto;
+};
+
+export type CartControllerUpdateCartItemData = MessageDto & {
+  data?: CartResponseDto;
+};
+
+export type CartControllerRemoveFromCartData = MessageDto & {
+  data?: CartResponseDto;
+};
+
+export type CartControllerClearCartData = MessageDto & {
+  data?: CartResponseDto;
+};
+
+export type CartControllerGetCartItemCountData = MessageDto & {
+  data?: CartCountResponseDto;
+};
+
+export type CartControllerValidateCartItemsData = MessageDto & {
+  data?: CartValidationResponseDto;
+};
+
+export type AddressControllerGetCountriesData = MessageDto & {
+  data?: object;
+};
+
+export type AddressControllerGetProvincesByCountryData = MessageDto & {
+  data?: object;
+};
+
+export type AddressControllerValidateAddressData = MessageDto & {
+  data?: object;
+};

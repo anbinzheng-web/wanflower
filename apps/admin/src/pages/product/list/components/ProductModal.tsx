@@ -3,6 +3,7 @@ import { ProTableRef } from '@/components/ProTable';
 import { useState, useCallback, useEffect } from 'react';
 import { defineSchemas } from '@/components/ProForm';
 import { API } from '@/api';
+import { Divider } from 'antd';
 
 export const useProductModal = (tableRef: React.RefObject<ProTableRef>) => {
   const [categories, setCategories] = useState<any[]>([])
@@ -33,6 +34,33 @@ export const useProductModal = (tableRef: React.RefObject<ProTableRef>) => {
       placeholder: '请选择分类'
     }},
     { name: 'sort_order', label: '排序权重', component: 'InputNumber', componentProps: { min: 0 } },
+
+    // 尺寸信息分组
+    { 
+      name: 'dimensions_divider', 
+      label: '', 
+      render: () => <Divider orientation="left" plain>尺寸信息</Divider>,
+      wrapperCol: { span: 24 }
+    },
+    { name: ['dimensions', 'length'], label: '长度(cm)', component: 'InputNumber', componentProps: { min: 0, precision: 1, placeholder: '请输入长度' } },
+    { name: ['dimensions', 'width'], label: '宽度(cm)', component: 'InputNumber', componentProps: { min: 0, precision: 1, placeholder: '请输入宽度' } },
+    { name: ['dimensions', 'height'], label: '高度(cm)', component: 'InputNumber', componentProps: { min: 0, precision: 1, placeholder: '请输入高度' } },
+    { name: ['dimensions', 'unit'], label: '尺寸单位', component: 'Select', componentProps: { 
+      options: [
+        { label: '厘米(cm)', value: 'cm' },
+        { label: '毫米(mm)', value: 'mm' },
+        { label: '英寸(in)', value: 'in' }
+      ],
+      defaultValue: 'cm'
+    }},
+
+    // SEO信息分组
+    { 
+      name: 'seo_divider', 
+      label: '', 
+      render: () => <Divider orientation="left" plain>SEO信息</Divider>,
+      wrapperCol: { span: 24 }
+    },
     { name: 'seo_title', label: 'SEO标题', component: 'Input' },
     { name: 'seo_description', label: 'SEO描述', component: 'Input' },
     { name: 'seo_keywords', label: 'SEO关键词', component: 'Select', componentProps: { 
@@ -45,7 +73,7 @@ export const useProductModal = (tableRef: React.RefObject<ProTableRef>) => {
   const openProductModal = (record?: any) => {
     showFullFormModal({
       schemas: productSchemas,
-      contentClasses: "w-[600px] mx-auto",
+      contentClasses: "w-[700px] mx-auto",
       proFormProps: {
         layout: 'horizontal',
         initialValues: record,
@@ -54,11 +82,21 @@ export const useProductModal = (tableRef: React.RefObject<ProTableRef>) => {
       },
       onOk: async (values) => {
         try {
+          // 处理尺寸信息，确保 dimensions 对象结构正确
+          const processedValues = {
+            ...values,
+            // 如果 dimensions 字段存在但为空对象，则删除它
+            ...(values.dimensions && Object.values(values.dimensions).every(v => !v) 
+              ? { dimensions: undefined } 
+              : {}
+            )
+          }
+
           let res;
-          if (values.id) {
-            res = await API.product.productControllerUpdateProduct(values)
+          if (processedValues.id) {
+            res = await API.product.productControllerUpdateProduct(processedValues)
           } else {
-            res = await API.product.productControllerCreateProduct(values)
+            res = await API.product.productControllerCreateProduct(processedValues)
           }
           if (res.code === 0) {
             tableRef.current?.refresh()

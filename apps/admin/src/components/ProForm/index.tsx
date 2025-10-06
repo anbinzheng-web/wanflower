@@ -1,7 +1,7 @@
 import { Col, Form, Row } from 'antd';
 import { ProFormProps } from './interface';
 import { Components } from './interface'
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { FormInstance } from 'antd';
 
 export const ProForm = (props: ProFormProps) => {
@@ -9,8 +9,8 @@ export const ProForm = (props: ProFormProps) => {
   const [formRef] = Form.useForm<FormInstance>()
   const formItems = schemas.map((item, index) => {
     const { component, render, componentProps, colProps, hide, ...formItemRest } = item;
-    const Comp = typeof render === 'function' ? render(formRef) : Components[component];
     const CompProps = typeof componentProps === 'function' ? componentProps(formRef) : componentProps;
+    const Comp = typeof render === 'function' ? render(formRef) : Components[component];
     let hideItem = false;
     if (typeof hide === 'function') {
       hideItem = hide(formRef);
@@ -19,7 +19,7 @@ export const ProForm = (props: ProFormProps) => {
     }
     return <Col span={hideItem ? 0 : 24} key={index} {...colProps}>
       <Form.Item {...formItemRest} noStyle={hideItem} key={index}>
-        { !hideItem ? <Comp {...CompProps as any} /> : null }
+        { !hideItem ? React.isValidElement(Comp) ? Comp : <Comp {...CompProps as any} /> : null }
       </Form.Item>
     </Col>
   })

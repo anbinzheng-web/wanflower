@@ -5,6 +5,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined, UploadOutlined
 import { Button, Tag, Image } from 'antd'
 import { useProductModal } from './components/ProductModal'
 import { useProductAttributeModal, useProductAttributeManager } from './components/ProductAttributeModal'
+import { useMediaManager } from '@/pages/product/list/components/useMediaModal'
 import { ProductListDtoStatusEnum } from 'backend-api';
 
 // 产品状态枚举
@@ -43,7 +44,7 @@ const actions = defineActions([
   {
     name: 'media',
     icon: <UploadOutlined />,
-    text: '媒体',
+    text: '管理媒体',
     collapsed: true,
   },
   {
@@ -60,6 +61,7 @@ export default function ProductList() {
   const { openProductModal } = useProductModal(tableRef)
   const { openAttributeModal } = useProductAttributeModal()
   const openAttributeManager = useProductAttributeManager()
+  const openMediaManager = useMediaManager()
 
   // 产品列表列定义
   const columns = defineColumns([
@@ -204,8 +206,9 @@ export default function ProductList() {
         break
       case 'media':
         // 管理媒体文件
-        // setSelectedProduct(record)
-        // setMediaModalVisible(true)
+        openMediaManager(record.id, record.name, () => {
+          tableRef.current?.refresh()
+        })
         break
       case 'delete':
         // 删除产品
@@ -236,7 +239,7 @@ export default function ProductList() {
         showQuickJumper: true,
         showTotal: (total) => `共 ${total} 条记录`
       }}
-      searchRight={<Button 
+      toolBar={<Button 
         type="primary" 
         icon={<PlusOutlined />}
         onClick={() => openProductModal()}

@@ -32,6 +32,7 @@ import {
   ProductControllerGetCategoryListParams,
   ProductControllerGetProductAttributesData,
   ProductControllerGetProductAttributesParams,
+  ProductControllerGetProductBySkuData,
   ProductControllerGetProductDetailData,
   ProductControllerGetProductListData,
   ProductControllerGetProductListParams,
@@ -95,6 +96,26 @@ export class ProductApi<SecurityDataType = unknown> {
   ) =>
     this.http.request<ProductControllerGetProductDetailData, any>({
       path: `/api/product/detail/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags product
+   * @name ProductControllerGetProductBySku
+   * @summary 通过SKU获取产品详情
+   * @request GET:/api/product/sku/{sku}
+   * @response `200` `ProductControllerGetProductBySkuData`
+   * @response `404` `void` 产品不存在
+   */
+  productControllerGetProductBySku = (
+    sku: string,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetProductBySkuData, void>({
+      path: `/api/product/sku/${sku}`,
       method: "GET",
       format: "json",
       ...params,

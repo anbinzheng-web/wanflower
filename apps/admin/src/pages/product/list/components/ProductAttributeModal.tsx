@@ -145,7 +145,7 @@ const ProductAttributeModal = ({ productId, productName, callback }: ProductAttr
       }}
       pagination={false}
       ref={attributeTableRef}
-      searchRight={<Button 
+      toolBar={<Button 
         type="primary" 
         icon={<PlusOutlined />}
         onClick={handleAddAttribute}

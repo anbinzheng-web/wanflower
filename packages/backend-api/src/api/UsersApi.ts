@@ -21,6 +21,7 @@ import {
   UserControllerSetRoleData,
   UserManagementControllerCreateUserData,
   UserManagementControllerDeleteUserData,
+  UserManagementControllerGetUserByEmailData,
   UserManagementControllerGetUserByIdData,
   UserManagementControllerGetUsersData,
   UserManagementControllerGetUsersParams,
@@ -203,6 +204,30 @@ export class UsersApi<SecurityDataType = unknown> {
     this.http.request<UserManagementControllerDeleteUserData, void>({
       path: `/api/admin/users/${id}`,
       method: "DELETE",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags users
+   * @name UserManagementControllerGetUserByEmail
+   * @summary 通过邮箱获取用户详情
+   * @request GET:/api/admin/users/email/{email}
+   * @secure
+   * @response `200` `UserManagementControllerGetUserByEmailData`
+   * @response `401` `void` 未授权
+   * @response `403` `void` 权限不足
+   * @response `404` `void` 用户不存在
+   */
+  userManagementControllerGetUserByEmail = (
+    email: string,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<UserManagementControllerGetUserByEmailData, void>({
+      path: `/api/admin/users/email/${email}`,
+      method: "GET",
       secure: true,
       format: "json",
       ...params,
