@@ -8,7 +8,7 @@ export { default as CustomerTooltip } from './Chart/customer-tooltip';
 export { default as OverviewAreaLine } from './Chart/overview-area-line';
 
 // Markdown 组件
-export { default as Markdown } from './Markdown';
+export { Markdown } from './Markdown';
 
 // 导航栏组件
 export { default as NavBar } from './NavBar';
@@ -21,8 +21,8 @@ export { default as Panel } from './Panel';
 export { default as PermissionWrapper } from './PermissionWrapper';
 
 // Pro 组件系列
-export { default as ProForm } from './ProForm';
-export { default as ProTable } from './ProTable';
+export { ProForm } from './ProForm';
+export { ProTable } from './ProTable';
 
 // 设置组件
 export { default as Settings } from './Settings';

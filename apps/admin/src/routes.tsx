@@ -7,7 +7,8 @@ import {
   ShoppingCartOutlined, 
   AppstoreOutlined,
   UnorderedListOutlined,
-  TagsOutlined
+  TagsOutlined,
+  DollarOutlined
 } from '@ant-design/icons';
 
 export type IRoute = AuthParams & {
@@ -60,6 +61,18 @@ export const routes: IRoute[] = [
         name: '购物车管理',
         key: 'order/cart',
         icon: <ShoppingCartOutlined />,
+      }
+    ]
+  },
+  {
+    name: '支付管理',
+    key: 'payment',
+    icon: <DollarOutlined />,
+    children: [
+      {
+        name: '支付记录',
+        key: 'payment/list',
+        icon: <UnorderedListOutlined />,
       }
     ]
   },

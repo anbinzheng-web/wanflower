@@ -19,6 +19,7 @@ export const Components = {
   ColorPicker,
   Checkbox,
   AutoComplete,
+  DateRange: DatePicker.RangePicker,
 }
 
 export type ComponentType = keyof typeof Components

@@ -1148,6 +1148,238 @@ export interface CartValidationResponseDto {
   invalidItems: any[];
 }
 
+export interface PaymentLogDto {
+  /**
+   * 支付日志ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 订单ID
+   * @example 1
+   */
+  order_id: number;
+  /**
+   * 支付方式
+   * @example "BANK_TRANSFER"
+   */
+  payment_method: PaymentLogDtoPaymentMethodEnum;
+  /**
+   * 支付金额
+   * @example 299.99
+   */
+  amount: number;
+  /**
+   * 第三方支付ID
+   * @example "pi_1234567890abcdef"
+   */
+  payment_id?: string;
+  /**
+   * 支付时间
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  paid_at: string;
+  /**
+   * 支付备注
+   * @example "银行转账，交易号：123456789"
+   */
+  payment_notes?: string;
+  /**
+   * 交易凭证号
+   * @example "TXN20240115001"
+   */
+  transaction_reference?: string;
+  /**
+   * 银行名称
+   * @example "中国工商银行"
+   */
+  bank_name?: string;
+  /**
+   * 账户后四位
+   * @example "1234"
+   */
+  account_last_four?: string;
+  /**
+   * 确认支付的管理员ID
+   * @example 1
+   */
+  admin_id: number;
+  /**
+   * 创建时间
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  created_at: string;
+}
+
+export interface PaymentStatsDto {
+  /**
+   * 总支付记录数
+   * @example 150
+   */
+  total_payments: number;
+  /**
+   * 总支付金额
+   * @example 45000
+   */
+  total_amount: number;
+  /**
+   * 今日支付记录数
+   * @example 5
+   */
+  today_payments: number;
+  /**
+   * 今日支付金额
+   * @example 1500
+   */
+  today_amount: number;
+  /**
+   * 本月支付记录数
+   * @example 45
+   */
+  month_payments: number;
+  /**
+   * 本月支付金额
+   * @example 13500
+   */
+  month_amount: number;
+  /** 按支付方式统计 */
+  by_payment_method: object;
+  /** 按支付状态统计 */
+  by_payment_status: object;
+}
+
+export interface UserInfoDto {
+  /**
+   * 用户ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 用户名
+   * @example "john_doe"
+   */
+  username: string;
+  /**
+   * 用户邮箱
+   * @example "john@example.com"
+   */
+  email: string;
+}
+
+export interface OrderInfoDto {
+  /**
+   * 订单ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 订单号
+   * @example "ORD-2024-001"
+   */
+  order_number: string;
+  /**
+   * 订单状态
+   * @example "PAID"
+   */
+  status: string;
+  /**
+   * 订单总金额
+   * @example 299.99
+   */
+  total_amount: number;
+  /** 用户信息 */
+  user: UserInfoDto;
+}
+
+export interface AdminInfoDto {
+  /**
+   * 管理员ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 管理员用户名
+   * @example "admin"
+   */
+  username: string;
+  /**
+   * 管理员邮箱
+   * @example "admin@example.com"
+   */
+  email: string;
+}
+
+export interface PaymentDetailDto {
+  /**
+   * 支付日志ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 订单ID
+   * @example 1
+   */
+  order_id: number;
+  /**
+   * 支付方式
+   * @example "BANK_TRANSFER"
+   */
+  payment_method: PaymentDetailDtoPaymentMethodEnum;
+  /**
+   * 支付金额
+   * @example 299.99
+   */
+  amount: number;
+  /**
+   * 第三方支付ID
+   * @example "pi_1234567890abcdef"
+   */
+  payment_id?: string;
+  /**
+   * 支付时间
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  paid_at: string;
+  /**
+   * 支付备注
+   * @example "银行转账，交易号：123456789"
+   */
+  payment_notes?: string;
+  /**
+   * 交易凭证号
+   * @example "TXN20240115001"
+   */
+  transaction_reference?: string;
+  /**
+   * 银行名称
+   * @example "中国工商银行"
+   */
+  bank_name?: string;
+  /**
+   * 账户后四位
+   * @example "1234"
+   */
+  account_last_four?: string;
+  /**
+   * 确认支付的管理员ID
+   * @example 1
+   */
+  admin_id: number;
+  /**
+   * 创建时间
+   * @format date-time
+   * @example "2024-01-15T10:30:00Z"
+   */
+  created_at: string;
+  /** 订单信息 */
+  order: OrderInfoDto;
+  /** 管理员信息 */
+  admin: AdminInfoDto;
+}
+
 /** 价格排序 */
 export enum ProductListDtoPriceOrderEnum {
   Asc = "asc",
@@ -1306,6 +1538,38 @@ export enum UpdateOrderDtoPaymentStatusEnum {
  * @example "BANK_TRANSFER"
  */
 export enum ConfirmPaymentDtoPaymentMethodEnum {
+  CASH = "CASH",
+  BANK_TRANSFER = "BANK_TRANSFER",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  CHECK = "CHECK",
+  STRIPE = "STRIPE",
+  PAYPAL = "PAYPAL",
+  ALIPAY = "ALIPAY",
+  WECHAT_PAY = "WECHAT_PAY",
+  OTHER = "OTHER",
+}
+
+/**
+ * 支付方式
+ * @example "BANK_TRANSFER"
+ */
+export enum PaymentLogDtoPaymentMethodEnum {
+  CASH = "CASH",
+  BANK_TRANSFER = "BANK_TRANSFER",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  CHECK = "CHECK",
+  STRIPE = "STRIPE",
+  PAYPAL = "PAYPAL",
+  ALIPAY = "ALIPAY",
+  WECHAT_PAY = "WECHAT_PAY",
+  OTHER = "OTHER",
+}
+
+/**
+ * 支付方式
+ * @example "BANK_TRANSFER"
+ */
+export enum PaymentDetailDtoPaymentMethodEnum {
   CASH = "CASH",
   BANK_TRANSFER = "BANK_TRANSFER",
   WIRE_TRANSFER = "WIRE_TRANSFER",
@@ -2219,5 +2483,187 @@ export type AddressControllerGetProvincesByCountryData = MessageDto & {
 };
 
 export type AddressControllerValidateAddressData = MessageDto & {
+  data?: object;
+};
+
+export interface PaymentControllerGetPaymentListParams {
+  /**
+   * 页码
+   * @min 1
+   * @example 1
+   */
+  page?: number;
+  /**
+   * 每页数量
+   * @min 1
+   * @max 100
+   * @example 10
+   */
+  page_size?: number;
+  /**
+   * 搜索关键词（订单号、用户邮箱、支付ID）
+   * @example "ORD-2024-001"
+   */
+  search?: string;
+  /**
+   * 支付方式
+   * @example "BANK_TRANSFER"
+   */
+  payment_method?: PaymentMethodEnum;
+  /**
+   * 支付状态
+   * @example "PAID"
+   */
+  payment_status?: PaymentStatusEnum1;
+  /**
+   * 开始日期
+   * @example "2024-01-01"
+   */
+  start_date?: string;
+  /**
+   * 结束日期
+   * @example "2024-01-31"
+   */
+  end_date?: string;
+  /**
+   * 最小金额
+   * @example 100
+   */
+  min_amount?: number;
+  /**
+   * 最大金额
+   * @example 1000
+   */
+  max_amount?: number;
+  /**
+   * 排序字段
+   * @example "created_at"
+   */
+  sort_by?: SortByEnum3;
+  /**
+   * 排序方向
+   * @example "desc"
+   */
+  sort_order?: SortOrderEnum3;
+}
+
+/**
+ * 支付方式
+ * @example "BANK_TRANSFER"
+ */
+export enum PaymentMethodEnum {
+  CASH = "CASH",
+  BANK_TRANSFER = "BANK_TRANSFER",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  CHECK = "CHECK",
+  STRIPE = "STRIPE",
+  PAYPAL = "PAYPAL",
+  ALIPAY = "ALIPAY",
+  WECHAT_PAY = "WECHAT_PAY",
+  OTHER = "OTHER",
+}
+
+/**
+ * 支付状态
+ * @example "PAID"
+ */
+export enum PaymentStatusEnum1 {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  CANCELLED = "CANCELLED",
+}
+
+/**
+ * 排序字段
+ * @example "created_at"
+ */
+export enum SortByEnum3 {
+  CreatedAt = "created_at",
+  PaidAt = "paid_at",
+  Amount = "amount",
+  PaymentMethod = "payment_method",
+}
+
+/**
+ * 排序方向
+ * @example "desc"
+ */
+export enum SortOrderEnum3 {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+export type PaymentControllerGetPaymentListData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: PaymentLogDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
+
+/**
+ * 支付方式
+ * @example "BANK_TRANSFER"
+ */
+export enum PaymentControllerGetPaymentListParams1PaymentMethodEnum {
+  CASH = "CASH",
+  BANK_TRANSFER = "BANK_TRANSFER",
+  WIRE_TRANSFER = "WIRE_TRANSFER",
+  CHECK = "CHECK",
+  STRIPE = "STRIPE",
+  PAYPAL = "PAYPAL",
+  ALIPAY = "ALIPAY",
+  WECHAT_PAY = "WECHAT_PAY",
+  OTHER = "OTHER",
+}
+
+/**
+ * 支付状态
+ * @example "PAID"
+ */
+export enum PaymentControllerGetPaymentListParams1PaymentStatusEnum {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  CANCELLED = "CANCELLED",
+}
+
+/**
+ * 排序字段
+ * @example "created_at"
+ */
+export enum PaymentControllerGetPaymentListParams1SortByEnum {
+  CreatedAt = "created_at",
+  PaidAt = "paid_at",
+  Amount = "amount",
+  PaymentMethod = "payment_method",
+}
+
+/**
+ * 排序方向
+ * @example "desc"
+ */
+export enum PaymentControllerGetPaymentListParams1SortOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+export type PaymentControllerGetPaymentStatsData = MessageDto & {
+  data?: PaymentStatsDto;
+};
+
+export type PaymentControllerGetPaymentDetailData = MessageDto & {
+  data?: PaymentDetailDto;
+};
+
+export type PaymentControllerDeletePaymentData = MessageDto & {
   data?: object;
 };

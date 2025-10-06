@@ -993,6 +993,7 @@ export default function Order() {
           rowKey="id"
           request={API.order.orderControllerGetOrders}
           className='bg-white rounded-lg shadow-sm border border-gray-200'
+          ref={tableRef}
           toolBar={
             <Button
               type="primary"
