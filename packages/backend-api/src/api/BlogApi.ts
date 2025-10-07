@@ -14,14 +14,17 @@ import {
   BlogCategoryCreateDto,
   BlogCategoryUpdateDto,
   BlogControllerAdminTestData,
+  BlogControllerBatchUploadBlogMediaData,
   BlogControllerCreateCategoryData,
   BlogControllerCreateData,
   BlogControllerCreateTagData,
+  BlogControllerDeleteBlogMediaData,
   BlogControllerDeleteCategoryData,
   BlogControllerDeleteData,
   BlogControllerDeleteTagData,
   BlogControllerFindByIdData,
   BlogControllerFindBySlugData,
+  BlogControllerGetBlogMediaListData,
   BlogControllerIncrementViewCountData,
   BlogControllerListCategoriesData,
   BlogControllerListCategoriesParams,
@@ -29,9 +32,12 @@ import {
   BlogControllerListParams,
   BlogControllerListTagsData,
   BlogControllerListTagsParams,
+  BlogControllerSetBlogCoverImageData,
+  BlogControllerUpdateBlogMediaData,
   BlogControllerUpdateCategoryData,
   BlogControllerUpdateData,
   BlogControllerUpdateTagData,
+  BlogControllerUploadBlogMediaData,
   BlogCreateDto,
   BlogSlugDto,
   BlogTagCreateDto,
@@ -344,6 +350,128 @@ export class BlogApi<SecurityDataType = unknown> {
       method: "DELETE",
       body: data,
       type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 支持图片和视频，需要员工或管理员权限
+   *
+   * @tags blog
+   * @name BlogControllerUploadBlogMedia
+   * @summary 上传博客媒体文件
+   * @request POST:/api/blog/media/upload
+   * @secure
+   * @response `201` `BlogControllerUploadBlogMediaData` 上传成功
+   * @response `400` `void` 文件格式或大小不符合要求
+   * @response `403` `void` 权限不足
+   */
+  blogControllerUploadBlogMedia = (params: RequestParams = {}) =>
+    this.http.request<BlogControllerUploadBlogMediaData, void>({
+      path: `/api/blog/media/upload`,
+      method: "POST",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags blog
+   * @name BlogControllerBatchUploadBlogMedia
+   * @summary 批量上传博客媒体文件
+   * @request POST:/api/blog/media/batch-upload/{blogId}
+   * @secure
+   * @response `201` `BlogControllerBatchUploadBlogMediaData` 上传成功
+   * @response `400` `void` 文件格式或大小不符合要求
+   * @response `403` `void` 权限不足
+   */
+  blogControllerBatchUploadBlogMedia = (
+    blogId: string,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<BlogControllerBatchUploadBlogMediaData, void>({
+      path: `/api/blog/media/batch-upload/${blogId}`,
+      method: "POST",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags blog
+   * @name BlogControllerGetBlogMediaList
+   * @summary 获取博客媒体列表
+   * @request GET:/api/blog/media/list/{blogId}
+   * @secure
+   * @response `200` `BlogControllerGetBlogMediaListData`
+   */
+  blogControllerGetBlogMediaList = (
+    blogId: string,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<BlogControllerGetBlogMediaListData, any>({
+      path: `/api/blog/media/list/${blogId}`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags blog
+   * @name BlogControllerUpdateBlogMedia
+   * @summary 更新博客媒体信息
+   * @request PUT:/api/blog/media/update
+   * @secure
+   * @response `200` `BlogControllerUpdateBlogMediaData`
+   * @response `403` `void` 无权限操作
+   * @response `404` `void` 媒体文件不存在
+   */
+  blogControllerUpdateBlogMedia = (params: RequestParams = {}) =>
+    this.http.request<BlogControllerUpdateBlogMediaData, void>({
+      path: `/api/blog/media/update`,
+      method: "PUT",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags blog
+   * @name BlogControllerDeleteBlogMedia
+   * @summary 删除博客媒体文件
+   * @request DELETE:/api/blog/media/delete
+   * @secure
+   * @response `200` `BlogControllerDeleteBlogMediaData`
+   * @response `403` `void` 无权限操作
+   * @response `404` `void` 媒体文件不存在
+   */
+  blogControllerDeleteBlogMedia = (params: RequestParams = {}) =>
+    this.http.request<BlogControllerDeleteBlogMediaData, void>({
+      path: `/api/blog/media/delete`,
+      method: "DELETE",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description 需要员工或管理员权限
+   *
+   * @tags blog
+   * @name BlogControllerSetBlogCoverImage
+   * @summary 设置博客封面图片
+   * @request POST:/api/blog/media/set-cover
+   * @secure
+   * @response `200` `BlogControllerSetBlogCoverImageData`
+   * @response `403` `void` 无权限操作
+   * @response `404` `void` 媒体文件不存在
+   */
+  blogControllerSetBlogCoverImage = (params: RequestParams = {}) =>
+    this.http.request<BlogControllerSetBlogCoverImageData, void>({
+      path: `/api/blog/media/set-cover`,
+      method: "POST",
+      secure: true,
       format: "json",
       ...params,
     });

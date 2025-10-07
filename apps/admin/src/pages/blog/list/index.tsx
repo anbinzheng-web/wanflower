@@ -1,11 +1,12 @@
 import { ProTable, defineColumns } from '@/components/ProTable'
 import { Button, Space, Tag, Modal } from 'antd'
-import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, EyeOutlined, DeleteOutlined, PlusOutlined, PictureOutlined } from '@ant-design/icons';
 import { useFormModal } from '@/hooks/useFormModal';
 import { useFullModal } from '@/hooks/useFullModal';
 import { API } from '@/api';
 import { useState, useEffect } from 'react';
 import { renderReactMarkdown } from 'react-markdown';
+import { useBlogMediaManager } from '../components/useMediaModal';
 
 // Markdown渲染组件
 const MarkdownRenderer = ({ content }: { content: string }) => {
@@ -359,6 +360,7 @@ const BlogEditor = ({
 export default function() {
   const showFormModal = useFormModal();
   const showFullModal = useFullModal();
+  const showBlogMediaManager = useBlogMediaManager();
   const [tags, setTags] = useState([]);
   const [categories, setCategories] = useState([]);
 
@@ -530,6 +532,11 @@ export default function() {
       text: '编辑'
     },
     {
+      name: 'media',
+      icon: <PictureOutlined />,
+      text: '媒体管理'
+    },
+    {
       name: 'delete',
       icon: <DeleteOutlined />,
       text: '删除',
@@ -591,6 +598,13 @@ export default function() {
               }
             }}
           />
+        });
+        break;
+      case 'media':
+        // 媒体管理
+        showBlogMediaManager(record.id, record.title, () => {
+          // 刷新表格
+          window.location.reload();
         });
         break;
       case 'delete':

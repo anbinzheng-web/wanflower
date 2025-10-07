@@ -10,6 +10,58 @@
  * ---------------------------------------------------------------
  */
 
+export interface MessageDto {
+  /**
+   * 响应状态码
+   * @example 0
+   */
+  code: number;
+  /**
+   * 响应消息
+   * @example "success"
+   */
+  message: string;
+  /** 响应数据 */
+  data: object;
+}
+
+export type DefaultModel = object;
+
+export interface MediaUploadDto {
+  /** 业务类型 */
+  business_type: MediaUploadDtoBusinessTypeEnum;
+  /** 关联的业务ID */
+  business_id?: number;
+  /** 媒体类型 */
+  type: MediaUploadDtoTypeEnum;
+  /** 替代文本 */
+  alt_text?: string;
+  /**
+   * 排序权重
+   * @default 0
+   */
+  sort_order?: number;
+  /**
+   * 媒体分类
+   * @default "DEFAULT"
+   */
+  category?: string;
+}
+
+export interface MediaBatchUploadDto {
+  /** 业务类型 */
+  business_type: MediaBatchUploadDtoBusinessTypeEnum;
+  /** 关联的业务ID */
+  business_id?: number;
+  /** 媒体类型 */
+  type: MediaBatchUploadDtoTypeEnum;
+  /**
+   * 媒体分类
+   * @default "DEFAULT"
+   */
+  category?: string;
+}
+
 export interface PaginatedDto {
   /**
    * 响应状态码
@@ -23,6 +75,54 @@ export interface PaginatedDto {
    * @example "success"
    */
   message: string;
+}
+
+export interface MediaResponseDto {
+  /** 媒体ID */
+  id: number;
+  /** 媒体URL */
+  url: string;
+  /** 缩略图URL */
+  thumbnail_url: string;
+  /** 原始文件名 */
+  filename: string;
+  /** 文件大小（字节） */
+  file_size: string;
+  /** MIME类型 */
+  mime_type: string;
+  /** 宽度 */
+  width?: number;
+  /** 高度 */
+  height?: number;
+  /** 时长（秒） */
+  duration?: number;
+  /** 替代文本 */
+  alt_text?: string;
+  /** 排序权重 */
+  sort_order: number;
+  /** 媒体分类 */
+  category: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  created_at: string;
+}
+
+export interface MediaUpdateDto {
+  /** 媒体ID */
+  id: number;
+  /** 替代文本 */
+  alt_text?: string;
+  /** 排序权重 */
+  sort_order?: number;
+  /** 媒体分类 */
+  category?: string;
+}
+
+export interface MediaDeleteDto {
+  /** 媒体ID */
+  id: number;
 }
 
 export interface ProductListDto {
@@ -52,21 +152,6 @@ export interface ProductListDto {
   min_price?: number;
   /** 最高价格筛选 */
   max_price?: number;
-}
-
-export interface MessageDto {
-  /**
-   * 响应状态码
-   * @example 0
-   */
-  code: number;
-  /**
-   * 响应消息
-   * @example "success"
-   */
-  message: string;
-  /** 响应数据 */
-  data: object;
 }
 
 export interface ProductDetailDto {
@@ -205,15 +290,6 @@ export interface ProductMediaUpdateDto {
 export interface ProductMediaDeleteDto {
   /** 媒体ID */
   id: number;
-}
-
-export interface ProductMediaMigrateToCdnDto {
-  /** 媒体ID */
-  id: number;
-  /** CDN URL */
-  cdn_url: string;
-  /** CDN存储键 */
-  cdn_key: string;
 }
 
 export interface CategoryCreateDto {
@@ -393,8 +469,6 @@ export interface BlogListDto {
   sort_order: BlogListDtoSortOrderEnum;
 }
 
-export type DefaultModel = object;
-
 export interface BlogSlugDto {
   /** slug */
   slug: string;
@@ -545,6 +619,42 @@ export interface BlogCategoryUpdateDto {
   id: number;
   /** 是否启用 */
   is_active: boolean;
+}
+
+export interface BlogMediaResponseDto {
+  /** 媒体ID */
+  id: number;
+  /** 媒体URL */
+  url: string;
+  /** 缩略图URL */
+  thumbnail_url: string;
+  /** 原始文件名 */
+  filename: string;
+  /** 文件大小（字节） */
+  file_size: string;
+  /** MIME类型 */
+  mime_type: string;
+  /** 宽度 */
+  width?: number;
+  /** 高度 */
+  height?: number;
+  /** 时长（秒） */
+  duration?: number;
+  /** 替代文本 */
+  alt_text?: string;
+  /** 排序权重 */
+  sort_order: number;
+  /** 媒体分类 */
+  category: string;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  created_at: string;
+  /** 业务类型 */
+  business_type: string;
+  /** 关联的业务ID */
+  business_id: number;
 }
 
 export interface CreateUserDto {
@@ -1380,6 +1490,36 @@ export interface PaymentDetailDto {
   admin: AdminInfoDto;
 }
 
+/** 业务类型 */
+export enum MediaUploadDtoBusinessTypeEnum {
+  PRODUCT = "PRODUCT",
+  BLOG = "BLOG",
+  REVIEW = "REVIEW",
+  USER = "USER",
+  GENERAL = "GENERAL",
+}
+
+/** 媒体类型 */
+export enum MediaUploadDtoTypeEnum {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+}
+
+/** 业务类型 */
+export enum MediaBatchUploadDtoBusinessTypeEnum {
+  PRODUCT = "PRODUCT",
+  BLOG = "BLOG",
+  REVIEW = "REVIEW",
+  USER = "USER",
+  GENERAL = "GENERAL",
+}
+
+/** 媒体类型 */
+export enum MediaBatchUploadDtoTypeEnum {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+}
+
 /** 价格排序 */
 export enum ProductListDtoPriceOrderEnum {
   Asc = "asc",
@@ -1581,6 +1721,94 @@ export enum PaymentDetailDtoPaymentMethodEnum {
   OTHER = "OTHER",
 }
 
+export type RedisHealthControllerCheckConnectionData = any;
+
+export type RedisHealthControllerGetServerInfoData = any;
+
+export type RedisHealthControllerCheckMemoryUsageData = any;
+
+export type RedisHealthControllerPerformanceTestData = any;
+
+export type RedisHealthControllerGetHealthSummaryData = any;
+
+export type MediaControllerUploadMediaData = MessageDto & {
+  data?: object;
+};
+
+export type MediaControllerBatchUploadMediaData = MessageDto & {
+  data?: object;
+};
+
+export interface MediaControllerGetMediaListParams {
+  /**
+   * 页码
+   * @default 1
+   */
+  page?: number;
+  /**
+   * 每页数量
+   * @default 20
+   */
+  page_size?: number;
+  /** 业务类型 */
+  business_type?: string;
+  /** 关联的业务ID */
+  business_id?: number;
+  /** 媒体类型 */
+  type?: TypeEnum;
+  /** 媒体分类 */
+  category?: string;
+  /** 用户ID */
+  user_id?: number;
+}
+
+/** 媒体类型 */
+export enum TypeEnum {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+}
+
+export type MediaControllerGetMediaListData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: MediaResponseDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
+
+/** 媒体类型 */
+export enum MediaControllerGetMediaListParams1TypeEnum {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+}
+
+export type MediaControllerUpdateMediaData = MessageDto & {
+  data?: object;
+};
+
+export type MediaControllerDeleteMediaData = MessageDto & {
+  data?: object;
+};
+
+export type MediaControllerGetMediaCategoriesData = MessageDto & {
+  data?: object;
+};
+
+export type MediaControllerGetBusinessTypesData = MessageDto & {
+  data?: object;
+};
+
+export type StorageHealthControllerGetStorageStatusData = any;
+
+export type StorageHealthControllerGetStorageConfigData = any;
+
+export type StorageHealthControllerTestStorageConnectionData = any;
+
 export interface ProductControllerGetProductListParams {
   /**
    * 页码
@@ -1685,8 +1913,6 @@ export type ProductControllerIncrementProductViewData = MessageDto & {
   data?: ProductViewDto;
 };
 
-export type ProductControllerGetProductMediaData = any;
-
 export type ProductControllerCreateProductData = MessageDto & {
   data?: ProductCreateDto;
 };
@@ -1709,9 +1935,13 @@ export type ProductControllerUpdateProductMediaData = any;
 
 export type ProductControllerDeleteProductMediaData = any;
 
-export type ProductControllerMigrateMediaToCdnData = any;
+export type ProductControllerGetProductMediaListData = any;
 
-export type ProductControllerBatchMigrateProductMediaToCdnData = any;
+export type ProductControllerGetProductMediaByIdData = any;
+
+export type ProductControllerSetProductMainImageData = any;
+
+export type ProductControllerGetProductMediaStatsData = any;
 
 export interface ProductControllerGetCategoryListParams {
   /**
@@ -2105,6 +2335,35 @@ export type BlogControllerDeleteCategoryData = MessageDto & {
   data?: object;
 };
 
+export type BlogControllerUploadBlogMediaData = any;
+
+export type BlogControllerBatchUploadBlogMediaData = any;
+
+export type BlogControllerGetBlogMediaListData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: BlogMediaResponseDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
+
+export type BlogControllerUpdateBlogMediaData = MessageDto & {
+  data?: object;
+};
+
+export type BlogControllerDeleteBlogMediaData = MessageDto & {
+  data?: object;
+};
+
+export type BlogControllerSetBlogCoverImageData = MessageDto & {
+  data?: object;
+};
+
 export type BlogControllerAdminTestData = MessageDto & {
   data?: object;
 };
@@ -2485,6 +2744,10 @@ export type AddressControllerGetProvincesByCountryData = MessageDto & {
 export type AddressControllerValidateAddressData = MessageDto & {
   data?: object;
 };
+
+export type OrderSchedulerControllerCheckTimeoutOrdersData = any;
+
+export type OrderSchedulerControllerGetOrderPaymentStatusData = any;
 
 export interface PaymentControllerGetPaymentListParams {
   /**

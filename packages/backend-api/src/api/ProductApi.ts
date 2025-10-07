@@ -18,7 +18,6 @@ import {
   ProductBatchDeleteDto,
   ProductBatchUpdateStatusDto,
   ProductControllerBatchDeleteProductsData,
-  ProductControllerBatchMigrateProductMediaToCdnData,
   ProductControllerBatchUpdateProductStatusData,
   ProductControllerBatchUploadProductMediaData,
   ProductControllerCreateCategoryData,
@@ -36,9 +35,11 @@ import {
   ProductControllerGetProductDetailData,
   ProductControllerGetProductListData,
   ProductControllerGetProductListParams,
-  ProductControllerGetProductMediaData,
+  ProductControllerGetProductMediaByIdData,
+  ProductControllerGetProductMediaListData,
+  ProductControllerGetProductMediaStatsData,
   ProductControllerIncrementProductViewData,
-  ProductControllerMigrateMediaToCdnData,
+  ProductControllerSetProductMainImageData,
   ProductControllerUpdateCategoryData,
   ProductControllerUpdateProductAttributeData,
   ProductControllerUpdateProductData,
@@ -46,7 +47,6 @@ import {
   ProductControllerUploadProductMediaData,
   ProductCreateDto,
   ProductMediaDeleteDto,
-  ProductMediaMigrateToCdnDto,
   ProductMediaUpdateDto,
   ProductMediaUploadDto,
   ProductUpdateDto,
@@ -139,24 +139,6 @@ export class ProductApi<SecurityDataType = unknown> {
       body: data,
       type: ContentType.Json,
       format: "json",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags product
-   * @name ProductControllerGetProductMedia
-   * @summary 获取产品媒体文件
-   * @request GET:/api/product/media/{productId}
-   * @response `200` `ProductControllerGetProductMediaData` 获取成功
-   */
-  productControllerGetProductMedia = (
-    productId: number,
-    params: RequestParams = {},
-  ) =>
-    this.http.request<ProductControllerGetProductMediaData, any>({
-      path: `/api/product/media/${productId}`,
-      method: "GET",
       ...params,
     });
   /**
@@ -275,7 +257,7 @@ export class ProductApi<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description 支持图片和视频，需要员工或管理员权限
+   * @description 使用统一媒体管理系统，支持图片和视频，需要员工或管理员权限
    *
    * @tags product
    * @name ProductControllerUploadProductMedia
@@ -299,7 +281,7 @@ export class ProductApi<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description 需要员工或管理员权限
+   * @description 使用统一媒体管理系统，需要员工或管理员权限
    *
    * @tags product
    * @name ProductControllerBatchUploadProductMedia
@@ -368,51 +350,87 @@ export class ProductApi<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description 仅管理员权限
+   * @description 使用统一媒体管理系统，需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerMigrateMediaToCdn
-   * @summary 迁移媒体文件到CDN
-   * @request POST:/api/product/media/migrate-to-cdn
+   * @name ProductControllerGetProductMediaList
+   * @summary 获取产品媒体列表
+   * @request GET:/api/product/media/list/{productId}
    * @secure
-   * @response `200` `ProductControllerMigrateMediaToCdnData` 迁移成功
-   * @response `403` `void` 权限不足
+   * @response `200` `ProductControllerGetProductMediaListData` 获取成功
    */
-  productControllerMigrateMediaToCdn = (
-    data: ProductMediaMigrateToCdnDto,
-    params: RequestParams = {},
-  ) =>
-    this.http.request<ProductControllerMigrateMediaToCdnData, void>({
-      path: `/api/product/media/migrate-to-cdn`,
-      method: "POST",
-      body: data,
-      secure: true,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * @description 仅管理员权限
-   *
-   * @tags product
-   * @name ProductControllerBatchMigrateProductMediaToCdn
-   * @summary 批量迁移产品媒体到CDN
-   * @request POST:/api/product/media/batch-migrate-to-cdn/{productId}
-   * @secure
-   * @response `200` `ProductControllerBatchMigrateProductMediaToCdnData` 迁移完成
-   * @response `403` `void` 权限不足
-   */
-  productControllerBatchMigrateProductMediaToCdn = (
+  productControllerGetProductMediaList = (
     productId: number,
     params: RequestParams = {},
   ) =>
-    this.http.request<ProductControllerBatchMigrateProductMediaToCdnData, void>(
-      {
-        path: `/api/product/media/batch-migrate-to-cdn/${productId}`,
-        method: "POST",
-        secure: true,
-        ...params,
-      },
-    );
+    this.http.request<ProductControllerGetProductMediaListData, any>({
+      path: `/api/product/media/list/${productId}`,
+      method: "GET",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description 使用统一媒体管理系统，需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerGetProductMediaById
+   * @summary 获取单个媒体文件信息
+   * @request GET:/api/product/media/{mediaId}
+   * @secure
+   * @response `200` `ProductControllerGetProductMediaByIdData` 获取成功
+   * @response `404` `void` 媒体文件不存在
+   */
+  productControllerGetProductMediaById = (
+    mediaId: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetProductMediaByIdData, void>({
+      path: `/api/product/media/${mediaId}`,
+      method: "GET",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description 使用统一媒体管理系统，需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerSetProductMainImage
+   * @summary 设置产品主图
+   * @request POST:/api/product/media/set-main/{productId}/{mediaId}
+   * @secure
+   * @response `200` `ProductControllerSetProductMainImageData` 设置成功
+   */
+  productControllerSetProductMainImage = (
+    productId: number,
+    mediaId: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerSetProductMainImageData, any>({
+      path: `/api/product/media/set-main/${productId}/${mediaId}`,
+      method: "POST",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description 使用统一媒体管理系统，需要员工或管理员权限
+   *
+   * @tags product
+   * @name ProductControllerGetProductMediaStats
+   * @summary 获取产品媒体统计
+   * @request GET:/api/product/media/stats/{productId}
+   * @secure
+   * @response `200` `ProductControllerGetProductMediaStatsData` 获取成功
+   */
+  productControllerGetProductMediaStats = (
+    productId: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<ProductControllerGetProductMediaStatsData, any>({
+      path: `/api/product/media/stats/${productId}`,
+      method: "GET",
+      secure: true,
+      ...params,
+    });
   /**
    * No description
    *

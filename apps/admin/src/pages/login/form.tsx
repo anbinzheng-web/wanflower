@@ -45,7 +45,7 @@ export default function LoginForm() {
         if (res.data) {
           // 保存token和用户信息
           if (res.data.access_token) {
-            saveTokens(res.data.access_token, res.data.refresh_token);
+            saveTokens(res.data.access_token);
           }
           if (res.data.user) {
             saveUserInfo(res.data.user);
@@ -105,7 +105,7 @@ export default function LoginForm() {
       <Form
         layout="vertical"
         form={formRef}
-        initialValues={{ email: 'admin@example.com', password: 'admin' }}
+        initialValues={{ email: 'admin@gmail.com', password: 'admin' }}
       >
         <Form.Item
           name="email"

@@ -8,7 +8,8 @@ import {
   AppstoreOutlined,
   UnorderedListOutlined,
   TagsOutlined,
-  DollarOutlined
+  DollarOutlined,
+  PictureOutlined
 } from '@ant-design/icons';
 
 export type IRoute = AuthParams & {
@@ -94,10 +95,15 @@ export const routes: IRoute[] = [
     ]
   },
   {
+    name: '媒体管理',
+    key: 'media',
+    icon: <PictureOutlined />
+  },
+  {
     name: '用户管理',
     key: 'user',
     icon: <UserOutlined />
-  }
+  },
 ];
 
 export const getName = (path: string, routes) => {

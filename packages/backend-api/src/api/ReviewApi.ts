@@ -240,7 +240,7 @@ export class ReviewApi<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description 支持图片和视频，需要登录
+   * @description 使用统一媒体管理系统，支持图片和视频，需要登录
    *
    * @tags review
    * @name ReviewControllerUploadReviewMedia
@@ -264,7 +264,7 @@ export class ReviewApi<SecurityDataType = unknown> {
       ...params,
     });
   /**
-   * @description 需要登录
+   * @description 使用统一媒体管理系统，需要登录
    *
    * @tags review
    * @name ReviewControllerBatchUploadReviewMedia

@@ -9,11 +9,17 @@ import { API } from '@/api';
 import type { UploadFile } from 'antd';
 import { Video } from '@/components/Video';
 
-// 媒体分类枚举
-const MEDIA_CATEGORY = {
-  MAIN: { text: '主图', color: 'red' },
-  GALLERY: { text: '画廊', color: 'blue' },
-  DETAIL: { text: '详情', color: 'green' }
+// 媒体类型枚举
+const MEDIA_TYPE = {
+  IMAGE: { text: '图片', color: 'blue' },
+  VIDEO: { text: '视频', color: 'green' }
+} as const;
+
+// 博客媒体分类枚举
+const BLOG_MEDIA_CATEGORY = {
+  COVER: { text: '封面', color: 'red' },
+  CONTENT: { text: '内容', color: 'blue' },
+  GALLERY: { text: '画廊', color: 'green' }
 } as const;
 
 // 媒体列表列定义
@@ -21,6 +27,7 @@ const mediaColumns = defineColumns([
   {
     title: '预览',
     dataIndex: 'url',
+    searchDefaultValue: '',
     render: (url: string, record: any) => (
       <div className="w-16 h-16">
         {record.type === 'IMAGE' ? (
@@ -41,6 +48,7 @@ const mediaColumns = defineColumns([
   {
     title: '文件名',
     dataIndex: 'filename',
+    searchDefaultValue: '',
     render: (filename: string) => (
       <div className="max-w-32 truncate" title={filename}>
         {filename}
@@ -49,18 +57,25 @@ const mediaColumns = defineColumns([
   },
   {
     title: '类型',
-    dataIndex: 'mime_type',
+    dataIndex: 'type',
+    searchDefaultValue: '',
+    render: (type: keyof typeof MEDIA_TYPE) => (
+      <span className={`px-2 py-1 rounded text-xs ${MEDIA_TYPE[type]?.color === 'blue' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+        {MEDIA_TYPE[type]?.text}
+      </span>
+    )
   },
   {
     title: '分类',
-    dataIndex: 'media_category',
-    render: (category: keyof typeof MEDIA_CATEGORY) => (
+    dataIndex: 'category',
+    searchDefaultValue: '',
+    render: (category: keyof typeof BLOG_MEDIA_CATEGORY) => (
       <span className={`px-2 py-1 rounded text-xs ${
-        category === 'MAIN' ? 'bg-red-100 text-red-600' :
-        category === 'GALLERY' ? 'bg-blue-100 text-blue-600' :
+        category === 'COVER' ? 'bg-red-100 text-red-600' :
+        category === 'CONTENT' ? 'bg-blue-100 text-blue-600' :
         'bg-green-100 text-green-600'
       }`}>
-        {MEDIA_CATEGORY[category]?.text}
+        {BLOG_MEDIA_CATEGORY[category]?.text}
       </span>
     )
   },
@@ -107,6 +122,11 @@ const mediaActions = defineActions([
     icon: <DownloadOutlined />,
   },
   {
+    name: 'setCover',
+    icon: <EyeOutlined />,
+    text: '设为封面'
+  },
+  {
     name: 'delete',
     icon: <DeleteOutlined />,
     danger: true,
@@ -124,9 +144,9 @@ export const useMediaModal = () => {
         { name: 'id', hide: true },
         { name: 'category', label: '媒体分类', component: 'Select', required: true, componentProps: { 
           options: [
-            { label: '主图', value: 'MAIN' },
-            { label: '画廊', value: 'GALLERY' },
-            { label: '详情', value: 'DETAIL' }
+            { label: '封面', value: 'COVER' },
+            { label: '内容', value: 'CONTENT' },
+            { label: '画廊', value: 'GALLERY' }
           ]
         }},
         { name: 'sort_order', label: '排序权重', component: 'InputNumber', componentProps: { min: 0, defaultValue: 0 } },
@@ -136,7 +156,7 @@ export const useMediaModal = () => {
       width: 500,
       onOk: async (values) => {
         try {
-          const res = await API.product.productControllerUpdateProductMedia(values);
+          const res = await API.blog.blogControllerUpdateBlogMedia(values);
           if (res.code === 0) {
             $message.success('更新成功');
             callback();
@@ -154,12 +174,12 @@ export const useMediaModal = () => {
 };
 
 interface MediaModalProps {
-  productId: number;
-  productName: string;
+  blogId: number;
+  blogTitle: string;
   callback: () => void;
 }
 
-const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
+const MediaModal = ({ blogId, blogTitle, callback }: MediaModalProps) => {
   const mediaTableRef = useRef<ProTableRef>(null);
   const { openMediaEditModal } = useMediaModal();
 
@@ -183,10 +203,28 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
         document.body.removeChild(link);
         break;
 
+      case 'setCover':
+        // 设为封面
+        try {
+          const res = await API.blog.blogControllerSetBlogCoverImage({
+            blog_id: blogId,
+            media_id: record.id
+          });
+          if (res.code === 0) {
+            $message.success('设置封面成功');
+            mediaTableRef.current?.refresh();
+          } else {
+            $message.error(res.message);
+          }
+        } catch (error) {
+          $message.error('设置封面失败');
+        }
+        break;
+
       case 'delete':
         // 删除媒体文件
         try {
-          const res = await API.product.productControllerDeleteProductMedia({ id: record.id });
+          const res = await API.blog.blogControllerDeleteBlogMedia({ id: record.id });
           if (res.code === 0) {
             $message.success('删除成功');
             mediaTableRef.current?.refresh();
@@ -201,19 +239,19 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
       default:
         console.warn('未知操作:', action, record);
     }
-  }, [openMediaEditModal]);
+  }, [openMediaEditModal, blogId]);
 
   // 处理文件上传
   const handleUpload = useCallback(async (file: UploadFile) => {
     try {
       const formData = new FormData();
       formData.append('file', file as any);
-      formData.append('product_id', productId.toString());
+      formData.append('blog_id', blogId.toString());
       formData.append('type', file.type?.startsWith('video/') ? 'VIDEO' : 'IMAGE');
-      formData.append('media_category', 'GALLERY');
+      formData.append('category', 'CONTENT');
       formData.append('sort_order', '0');
 
-      const res = await API.product.productControllerUploadProductMedia(formData as any);
+      const res = await API.blog.blogControllerUploadBlogMedia(formData as any);
       if (res.code === 0) {
         $message.success('上传成功');
         mediaTableRef.current?.refresh();
@@ -226,7 +264,7 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
       $message.error('上传失败');
       return false;
     }
-  }, [productId]);
+  }, [blogId]);
 
   // 处理批量上传
   const handleBatchUpload = useCallback(async (fileList: UploadFile[]) => {
@@ -237,7 +275,7 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
       });
       formData.append('type', 'IMAGE');
 
-      const res = await API.product.productControllerBatchUploadProductMedia(productId, formData as any);
+      const res = await API.blog.blogControllerBatchUploadBlogMedia(blogId, formData as any);
       if (res.code === 0) {
         $message.success('批量上传成功');
         mediaTableRef.current?.refresh();
@@ -247,14 +285,14 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
     } catch (error) {
       $message.error('批量上传失败');
     }
-  }, [productId]);
+  }, [blogId]);
 
   return (
     <ProTable
       columns={mediaColumns}
       actions={mediaActions}
       handleAction={handleMediaAction}
-      request={(params) => API.product.productControllerGetProductMediaList(productId)}
+      request={(params) => API.blog.blogControllerGetBlogMediaList(blogId)}
       pagination={false}
       ref={mediaTableRef}
       toolBar={
@@ -290,13 +328,13 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
   );
 };
 
-export const useMediaManager = () => {
+export const useBlogMediaManager = () => {
   const showFullModal = useFullModal();
   
-  return function (productId: number, productName: string, callback: () => void) {
+  return function (blogId: number, blogTitle: string, callback: () => void) {
     showFullModal({
-      title: `媒体管理 - ${productName}`,
-      content: ({ destroy }) => <MediaModal productId={productId} productName={productName} callback={callback} />
+      title: `媒体管理 - ${blogTitle}`,
+      content: ({ destroy }) => <MediaModal blogId={blogId} blogTitle={blogTitle} callback={callback} />
     });
   };
 };
