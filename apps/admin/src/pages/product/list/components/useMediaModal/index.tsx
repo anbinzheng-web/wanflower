@@ -8,6 +8,7 @@ import { Button, Space, Image, Upload, Modal, message } from 'antd';
 import { API } from '@/api';
 import type { UploadFile } from 'antd';
 import { Video } from '@/components/Video';
+import { useDebounceFn } from 'ahooks';
 
 // 媒体分类枚举
 const MEDIA_CATEGORY = {
@@ -23,7 +24,7 @@ const mediaColumns = defineColumns([
     dataIndex: 'url',
     render: (url: string, record: any) => (
       <div className="w-16 h-16">
-        {record.type === 'IMAGE' ? (
+        {record.mime_type.startsWith('image/') ? (
           <Image
             src={'http://127.0.0.1:3000' + url}
             alt={record.alt_text || '媒体文件'}
@@ -85,13 +86,11 @@ const mediaColumns = defineColumns([
   {
     title: '排序权重',
     dataIndex: 'sort_order',
-    searchDefaultValue: '',
     render: (order: number) => order || 0
   },
   {
     title: '替代文本',
     dataIndex: 'alt_text',
-    searchDefaultValue: '',
     render: (text: string) => text || '-'
   }
 ]);
@@ -122,7 +121,7 @@ export const useMediaModal = () => {
       title: '编辑媒体信息',
       schemas: [
         { name: 'id', hide: true },
-        { name: 'category', label: '媒体分类', component: 'Select', required: true, componentProps: { 
+        { name: 'media_category', label: '媒体分类', component: 'Select', required: true, componentProps: { 
           options: [
             { label: '主图', value: 'MAIN' },
             { label: '画廊', value: 'GALLERY' },
@@ -156,10 +155,9 @@ export const useMediaModal = () => {
 interface MediaModalProps {
   productId: number;
   productName: string;
-  callback: () => void;
 }
 
-const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
+const MediaModal = ({ productId, productName }: MediaModalProps) => {
   const mediaTableRef = useRef<ProTableRef>(null);
   const { openMediaEditModal } = useMediaModal();
 
@@ -203,6 +201,11 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
     }
   }, [openMediaEditModal]);
 
+  const success = useDebounceFn(() => {
+    $message.success('上传成功');
+    mediaTableRef.current?.refresh();
+  }, { wait: 100 });
+
   // 处理文件上传
   const handleUpload = useCallback(async (file: UploadFile) => {
     try {
@@ -215,38 +218,16 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
 
       const res = await API.product.productControllerUploadProductMedia(formData as any);
       if (res.code === 0) {
-        $message.success('上传成功');
-        mediaTableRef.current?.refresh();
-        return true;
+        // 短时间内触发多次，这里只执行一次
+        success.run();
       } else {
         $message.error(res.message);
-        return false;
       }
     } catch (error) {
       $message.error('上传失败');
-      return false;
     }
-  }, [productId]);
 
-  // 处理批量上传
-  const handleBatchUpload = useCallback(async (fileList: UploadFile[]) => {
-    try {
-      const formData = new FormData();
-      fileList.forEach(file => {
-        formData.append('files', file as any);
-      });
-      formData.append('type', 'IMAGE');
-
-      const res = await API.product.productControllerBatchUploadProductMedia(productId, formData as any);
-      if (res.code === 0) {
-        $message.success('批量上传成功');
-        mediaTableRef.current?.refresh();
-      } else {
-        $message.error(res.message);
-      }
-    } catch (error) {
-      $message.error('批量上传失败');
-    }
+    return false;
   }, [productId]);
 
   return (
@@ -254,38 +235,22 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
       columns={mediaColumns}
       actions={mediaActions}
       handleAction={handleMediaAction}
-      request={(params) => API.product.productControllerGetProductMediaList(productId)}
+      request={() => API.product.productControllerGetProductMediaList(productId)}
       pagination={false}
       ref={mediaTableRef}
-      toolBar={
-        <Space>
-          <Upload
-            beforeUpload={handleUpload}
-            showUploadList={false}
-            accept="image/*,video/*"
-          >
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />}
-            >
-              上传文件
-            </Button>
-          </Upload>
-          <Upload
-            beforeUpload={() => false}
-            onChange={({ fileList }) => handleBatchUpload(fileList)}
-            multiple
-            accept="image/*"
-            showUploadList={false}
-          >
-            <Button 
-              icon={<PlusOutlined />}
-            >
-              批量上传
-            </Button>
-          </Upload>
-        </Space>
-      }
+      toolBar={<Upload
+        beforeUpload={handleUpload}
+        showUploadList={false}
+        accept="image/*,video/*"
+        multiple
+      >
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />}
+        >
+          上传文件
+        </Button>
+      </Upload>}
     />
   );
 };
@@ -293,10 +258,10 @@ const MediaModal = ({ productId, productName, callback }: MediaModalProps) => {
 export const useMediaManager = () => {
   const showFullModal = useFullModal();
   
-  return function (productId: number, productName: string, callback: () => void) {
+  return function (productId: number, productName: string) {
     showFullModal({
       title: `媒体管理 - ${productName}`,
-      content: ({ destroy }) => <MediaModal productId={productId} productName={productName} callback={callback} />
+      content: () => <MediaModal productId={productId} productName={productName} />
     });
   };
 };

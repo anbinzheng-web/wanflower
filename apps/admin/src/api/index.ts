@@ -1,4 +1,4 @@
-import { HttpClient, BlogApi, ProductApi, AuthApi, UsersApi, OrdersApi, CartApi, AddressApi, PaymentsApi, MediaApi } from 'backend-api'
+import { HttpClient, BlogApi, ProductApi, AuthApi, UsersApi, OrdersApi, CartApi, AdminCartApi, AddressApi, PaymentsApi, MediaApi } from 'backend-api'
 import { getAccessToken, refreshToken, logout } from '@/utils/auth'
 
 // console.log('VITE_BASE_URL', import.meta.env.VITE_BASE_URL)
@@ -109,6 +109,7 @@ export const API = {
   users: new UsersApi(httpClient),
   order: new OrdersApi(httpClient),
   cart: new CartApi(httpClient),
+  adminCart: new AdminCartApi(httpClient),
   address: new AddressApi(httpClient),
   payment: new PaymentsApi(httpClient),
   media: new MediaApi(httpClient),

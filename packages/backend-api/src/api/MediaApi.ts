@@ -11,18 +11,15 @@
  */
 
 import {
-  MediaBatchUploadDto,
   MediaControllerBatchUploadMediaData,
   MediaControllerDeleteMediaData,
   MediaControllerGetBusinessTypesData,
   MediaControllerGetMediaCategoriesData,
   MediaControllerGetMediaListData,
-  MediaControllerGetMediaListParams,
   MediaControllerUpdateMediaData,
   MediaControllerUploadMediaData,
   MediaDeleteDto,
   MediaUpdateDto,
-  MediaUploadDto,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
@@ -44,16 +41,11 @@ export class MediaApi<SecurityDataType = unknown> {
    * @response `200` `MediaControllerUploadMediaData`
    * @response `400` `void` 文件格式或大小不符合要求
    */
-  mediaControllerUploadMedia = (
-    data: MediaUploadDto,
-    params: RequestParams = {},
-  ) =>
+  mediaControllerUploadMedia = (params: RequestParams = {}) =>
     this.http.request<MediaControllerUploadMediaData, void>({
       path: `/api/media/upload`,
       method: "POST",
-      body: data,
       secure: true,
-      type: ContentType.FormData,
       format: "json",
       ...params,
     });
@@ -68,16 +60,11 @@ export class MediaApi<SecurityDataType = unknown> {
    * @response `200` `MediaControllerBatchUploadMediaData`
    * @response `400` `void` 文件格式或大小不符合要求
    */
-  mediaControllerBatchUploadMedia = (
-    data: MediaBatchUploadDto,
-    params: RequestParams = {},
-  ) =>
+  mediaControllerBatchUploadMedia = (params: RequestParams = {}) =>
     this.http.request<MediaControllerBatchUploadMediaData, void>({
       path: `/api/media/batch-upload`,
       method: "POST",
-      body: data,
       secure: true,
-      type: ContentType.FormData,
       format: "json",
       ...params,
     });
@@ -91,14 +78,10 @@ export class MediaApi<SecurityDataType = unknown> {
    * @secure
    * @response `200` `MediaControllerGetMediaListData`
    */
-  mediaControllerGetMediaList = (
-    query: MediaControllerGetMediaListParams,
-    params: RequestParams = {},
-  ) =>
+  mediaControllerGetMediaList = (params: RequestParams = {}) =>
     this.http.request<MediaControllerGetMediaListData, any>({
       path: `/api/media/list`,
       method: "GET",
-      query: query,
       secure: true,
       format: "json",
       ...params,

@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
-import { Layout, Menu, Breadcrumb, Spin } from 'antd';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Layout, Menu, Spin } from 'antd';
 import type { MenuProps } from 'antd';
 import qs from 'query-string';
 import NProgress from 'nprogress';
@@ -14,7 +13,6 @@ import lazyload from './utils/lazyload';
 import { useAppStore } from './store';
 import styles from './style/layout.module.less';
 
-const Sider = Layout.Sider;
 const Content = Layout.Content;
 
 function getFlattenRoutes(routes) {

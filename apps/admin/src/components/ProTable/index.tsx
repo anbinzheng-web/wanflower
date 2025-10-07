@@ -91,7 +91,7 @@ export const ProTable = (props: ProTableProps) => {
   useImperativeHandle(ref, () => {
     return {
       refresh: () => {
-        fetchData()
+        fetchData(params)
       }
     }
   })

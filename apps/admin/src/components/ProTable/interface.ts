@@ -15,6 +15,7 @@ type ActionItem = {
   danger?: boolean
   type?: 'divider'
   disabled?: boolean
+  children?: ActionItem[]
 }
 
 export interface ActionsProps {

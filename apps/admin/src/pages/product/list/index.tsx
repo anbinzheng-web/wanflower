@@ -1,12 +1,12 @@
 import { useCallback, useRef } from 'react'
 import { ProTable, defineColumns, defineActions, ProTableRef } from '@/components/ProTable'
 import { API } from '@/api'
-import { EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined, UploadOutlined, SettingOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined, UploadOutlined, SettingOutlined, CheckCircleOutlined, StopOutlined } from '@ant-design/icons'
 import { Button, Tag, Image } from 'antd'
 import { useProductModal } from './components/ProductModal'
 import { useProductAttributeModal, useProductAttributeManager } from './components/ProductAttributeModal'
 import { useMediaManager } from '@/pages/product/list/components/useMediaModal'
-import { ProductListDtoStatusEnum } from 'backend-api';
+import { ProductListDtoStatusEnum, ProductUpdateDtoStatusEnum } from 'backend-api';
 
 // 产品状态枚举
 const PRODUCT_STATUS = {
@@ -20,15 +20,41 @@ const actions = defineActions([
   {
     name: 'view',
     icon: <EyeOutlined />,
+    text: '查看产品',
+    collapsed: true,
+  },
+  {
+    name: 'set-status',
+    icon: <SettingOutlined />,
+    text: '设置状态',
+    collapsed: true,
+    children: [
+      {
+        name: 'set-status-active',
+        icon: <CheckCircleOutlined />,
+        text: '上架',
+      },
+      {
+        name: 'set-status-inactive',
+        icon: <StopOutlined />,
+        text: '下架',
+      },
+    ]
   },
   {
     name: 'edit',
     icon: <EditOutlined />,
+    text: '编辑产品',
+    collapsed: true,
+  },
+  {
+    type: 'divider',
+    collapsed: true,
   },
   {
     name: 'attributes',
     icon: <SettingOutlined />,
-    text: '管理规格',
+    text: '规格管理',
     collapsed: true,
   },
   {
@@ -44,13 +70,13 @@ const actions = defineActions([
   {
     name: 'media',
     icon: <UploadOutlined />,
-    text: '管理媒体',
+    text: '媒体管理',
     collapsed: true,
   },
   {
     name: 'delete',
     icon: <DeleteOutlined />,
-    text: '删除',
+    text: '删除产品',
     collapsed: true,
     danger: true,
   }
@@ -179,15 +205,42 @@ export default function ProductList() {
   const handleAction = useCallback(async (action: string, record: any) => {
     switch (action) {
       case 'view':
-        // 查看产品详情
-        try {
-          const response = await API.product.productControllerGetProductDetail(record.id)
-          console.log('产品详情:', response.data)
-          // 这里可以打开详情弹窗或跳转到详情页
-        } catch (error) {
-          $message.error('获取产品详情失败')
-        }
+        // TODO: 直接打开用户侧产品详情页去看看这个产品的实际展示效果
+        // window.open(`/product/${record.sku}`, '_blank')
         break
+      case 'set-status-active':
+        // 上架产品
+        try {
+          const res = await API.product.productControllerUpdateProduct({
+            id: record.id,
+            status: ProductUpdateDtoStatusEnum.ACTIVE
+          })
+          if (res.code === 0) {
+            tableRef.current?.refresh()
+          } else {
+            $message.error(res.message)
+          }
+        } catch (error) {
+          $message.error('上架产品失败')
+        }
+        break;
+
+      case 'set-status-inactive':
+        // 下架产品
+        try {
+          const res = await API.product.productControllerUpdateProduct({
+            id: record.id,
+            status: ProductUpdateDtoStatusEnum.INACTIVE
+          })
+          if (res.code === 0) {
+            tableRef.current?.refresh()
+          } else {
+            $message.error(res.message)
+          }
+        } catch (error) {
+          $message.error('下架产品失败')
+        }
+        break;
       case 'edit':
         // 编辑产品
         openProductModal(record)
@@ -206,9 +259,7 @@ export default function ProductList() {
         break
       case 'media':
         // 管理媒体文件
-        openMediaManager(record.id, record.name, () => {
-          tableRef.current?.refresh()
-        })
+        openMediaManager(record.id, record.name)
         break
       case 'delete':
         // 删除产品

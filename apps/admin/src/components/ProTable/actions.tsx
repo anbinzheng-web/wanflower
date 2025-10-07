@@ -24,17 +24,20 @@ export const Actions = (props: ActionsProps) => {
 
   const showActions = useMemo(() => actions.filter(item => !item.hide?.(record)), [actions, record])
 
-  const dropdownItems = useMemo(() => {
-    return showActions.filter(item => item.collapsed).map(item => ({
+  const formatDropdown = (item) => {
+    return {
       key: item.name,
       label: item.text,
       icon: item.icon,
       type: item.type,
       danger: item.danger,
       disabled: item.disabled,
-      onClick: () => handleAction(item.name, record)
-    }))
-  }, [showActions])
+      onClick: () => handleAction(item.name, record),
+      children: item.children?.map(formatDropdown)
+    }
+  }
+
+  const dropdownItems = useMemo(() => showActions.filter(item => item.collapsed).map(formatDropdown), [showActions])
 
   return <Space>
     {showActions.filter(item => !item.collapsed).map(item => {

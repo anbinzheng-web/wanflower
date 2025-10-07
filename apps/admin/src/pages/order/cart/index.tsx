@@ -1,312 +1,301 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ProTable, defineColumns } from '@/components/ProTable';
-import { Button, Tag, Modal, Card, Row, Col, Statistic, InputNumber } from 'antd';
-import { DeleteOutlined, ShoppingCartOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { Tag, Modal, Card, Row, Col, Statistic, Divider, Avatar, Typography, Space } from 'antd';
+import { UserOutlined, ShoppingCartOutlined, DollarOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { API } from '@/api';
 
-export default function Cart() {
-  const [loading, setLoading] = useState(false);
-  const [cartData, setCartData] = useState(null);
-  const [itemCount, setItemCount] = useState(0);
+const { Title, Text } = Typography;
 
-  // 获取购物车数据
-  const fetchCart = async () => {
-    setLoading(true);
-    try {
-      const response = await API.cart.cartControllerGetCart();
-      if (response.code === 0) {
-        setCartData(response.data);
-        // 计算商品总数量
-        const totalCount = response.data?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-        setItemCount(totalCount);
-      }
-    } catch (error) {
-      globalThis.$message.error('获取购物车失败');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 获取购物车商品数量
-  const fetchCartCount = async () => {
-    try {
-      const response = await API.cart.cartControllerGetCartItemCount();
-      if (response.code === 0) {
-        setItemCount(response.data.count);
-      }
-    } catch (error) {
-      console.error('获取购物车数量失败:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  // 更新商品数量
-  const updateQuantity = async (productId, newQuantity) => {
-    try {
-      const response = await API.cart.cartControllerUpdateCartItem(productId, { quantity: newQuantity });
-      if (response.code === 0) {
-        globalThis.$message.success('数量更新成功');
-        fetchCart();
-        fetchCartCount();
-      }
-    } catch (error) {
-      globalThis.$message.error('更新数量失败');
-    }
-  };
-
-  // 移除商品
-  const removeItem = async (productId) => {
-    Modal.confirm({
-      title: '确认移除商品',
-      content: '确定要从购物车中移除此商品吗？',
-      onOk: async () => {
-        try {
-          const response = await API.cart.cartControllerRemoveFromCart(productId);
-          if (response.code === 0) {
-            globalThis.$message.success('商品移除成功');
-            fetchCart();
-            fetchCartCount();
-          }
-        } catch (error) {
-          globalThis.$message.error('移除商品失败');
-        }
-      },
-    });
-  };
-
-  // 清空购物车
-  const clearCart = async () => {
-    Modal.confirm({
-      title: '确认清空购物车',
-      content: '确定要清空购物车吗？此操作不可恢复。',
-      onOk: async () => {
-        try {
-          const response = await API.cart.cartControllerClearCart();
-          if (response.code === 0) {
-            globalThis.$message.success('购物车已清空');
-            fetchCart();
-            fetchCartCount();
-          }
-        } catch (error) {
-          globalThis.$message.error('清空购物车失败');
-        }
-      },
-    });
-  };
-
-  // 表格列定义
+export default function AdminCart() {
   const columns = defineColumns([
+    {
+      title: '用户信息',
+      key: 'user_info',
+      render: (_, record) => {
+        const user = record.user;
+        return (
+          <div>
+            <div style={{ fontWeight: 'bold' }}>
+              {user.first_name} {user.last_name}
+            </div>
+            <div style={{ fontSize: '12px', color: '#666' }}>
+              {user.email}
+            </div>
+            <div style={{ fontSize: '12px', color: '#999' }}>
+              ID: {user.id}
+            </div>
+          </div>
+        );
+      }
+    },
     {
       title: '商品信息',
       key: 'product_info',
-      width: 300,
       render: (_, record) => {
-        const product = record.product;
-        const media = product?.media?.[0];
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {media && (
-              <img
-                src={media.cdn_url || media.local_path}
-                alt={product.name}
-                style={{ width: 60, height: 60, objectFit: 'cover', marginRight: 12, borderRadius: 4 }}
-              />
-            )}
-            <div>
-              <div style={{ fontWeight: 'bold', marginBottom: 4 }}>{product.name}</div>
-              <div style={{ fontSize: '12px', color: '#666' }}>
-                SKU: {product.sku || '-'}
-              </div>
-              <div style={{ fontSize: '12px', color: '#666' }}>
-                库存: {product.stock} 件
-              </div>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      title: '单价',
-      key: 'unit_price',
-      width: 100,
-      render: (_, record) => {
-        const product = record.product;
+        const items = record.items || [];
+        if (items.length === 0) {
+          return <Tag color="default">空购物车</Tag>;
+        }
         return (
           <div>
-            <div style={{ fontWeight: 'bold', color: '#e74c3c' }}>
-              ¥{product.price}
-            </div>
-            {product.original_price && product.original_price > product.price && (
-              <div style={{ fontSize: '12px', color: '#999', textDecoration: 'line-through' }}>
-                ¥{product.original_price}
+            {items.slice(0, 2).map((item, index) => {
+              const product = item.product;
+              const media = product?.media?.[0];
+              return (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                  {media && (
+                    <img
+                      src={media.cdn_url || media.local_path}
+                      alt={product.name}
+                      style={{ width: 40, height: 40, objectFit: 'cover', marginRight: 8, borderRadius: 4 }}
+                    />
+                  )}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '12px', fontWeight: 'bold' }}>{product.name}</div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>
+                      数量: {item.quantity} | ¥{product.price}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {items.length > 2 && (
+              <div style={{ fontSize: '11px', color: '#999' }}>
+                还有 {items.length - 2} 个商品...
               </div>
             )}
           </div>
         );
-      },
+      }
     },
     {
-      title: '数量',
-      key: 'quantity',
-      width: 120,
-      render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Button
-            size="small"
-            icon={<MinusOutlined />}
-            onClick={() => {
-              if (record.quantity > 1) {
-                updateQuantity(record.product_id, record.quantity - 1);
-              }
-            }}
-            disabled={record.quantity <= 1}
-          />
-          <InputNumber
-            min={1}
-            max={record.product.stock}
-            value={record.quantity}
-            onChange={(value) => {
-              if (value && value !== record.quantity) {
-                updateQuantity(record.product_id, value);
-              }
-            }}
-            style={{ width: 60 }}
-          />
-          <Button
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              if (record.quantity < record.product.stock) {
-                updateQuantity(record.product_id, record.quantity + 1);
-              }
-            }}
-            disabled={record.quantity >= record.product.stock}
-          />
-        </div>
-      ),
-    },
-    {
-      title: '小计',
-      key: 'subtotal',
-      width: 100,
+      title: '统计信息',
+      key: 'statistics',
       render: (_, record) => {
-        const subtotal = Number(record.product.price) * record.quantity;
+        const stats = record.statistics;
         return (
-          <div style={{ fontWeight: 'bold', color: '#e74c3c' }}>
-            ¥{subtotal.toFixed(2)}
+          <div>
+            <div style={{ fontSize: '12px' }}>
+              <Tag color="blue">商品: {stats.total_items}</Tag>
+            </div>
+            <div style={{ fontSize: '12px' }}>
+              <Tag color="green">数量: {stats.total_quantity}</Tag>
+            </div>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#e74c3c' }}>
+              ¥{stats.total_value.toFixed(2)}
+            </div>
           </div>
         );
-      },
+      }
     },
     {
-      title: '状态',
-      key: 'status',
-      width: 100,
-      render: (_, record) => {
-        const product = record.product;
-        if (product.status !== 'ACTIVE') {
-          return <Tag color="red">商品已下架</Tag>;
-        }
-        if (product.stock < record.quantity) {
-          return <Tag color="orange">库存不足</Tag>;
-        }
-        return <Tag color="green">正常</Tag>;
-      },
+      title: '创建时间',
+      dataIndex: 'created_at',
+      render: (date) => globalThis.$formatDate(date),
+      sorter: true
     },
     {
-      title: '操作',
-      key: 'actions',
-      width: 100,
-      render: (_, record) => (
-        <Button
-          type="text"
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => removeItem(record.product_id)}
-        >
-          移除
-        </Button>
-      ),
-    },
+      title: '更新时间',
+      dataIndex: 'updated_at',
+      render: (date) => globalThis.$formatDate(date),
+      sorter: true
+    }
   ]);
 
-  // 计算总金额
-  const calculateTotal = () => {
-    if (!cartData?.items) return 0;
-    return cartData.items.reduce((total, item) => {
-      return total + (Number(item.product.price) * item.quantity);
-    }, 0);
+  // 操作按钮
+  const actions = [
+    {
+      name: 'view',
+      icon: <UserOutlined />
+    }
+  ];
+
+  const handleAction = async (name: string, record: any) => {
+    switch (name) {
+      case 'view':
+        // 查看逻辑
+        Modal.info({
+          title: (
+            <Space>
+              <ShoppingCartOutlined style={{ color: '#1890ff' }} />
+              <span>购物车详情</span>
+            </Space>
+          ),
+          width: 900,
+          content: (
+            <div style={{ padding: '8px 0' }}>
+              {/* 用户信息卡片 */}
+              <Card 
+                size="small" 
+                style={{ marginBottom: 16, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}
+                bodyStyle={{ padding: '16px' }}
+              >
+                <Row gutter={16} align="middle">
+                  <Col>
+                    <Avatar size={48} icon={<UserOutlined />} style={{ backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                  </Col>
+                  <Col flex={1}>
+                    <Title level={4} style={{ color: 'white', margin: 0 }}>
+                      {record.user.first_name} {record.user.last_name}
+                    </Title>
+                    <Text style={{ color: 'rgba(255,255,255,0.8)' }}>
+                      {record.user.email}
+                    </Text>
+                    <br />
+                    <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px' }}>
+                      用户ID: {record.user.id}
+                    </Text>
+                  </Col>
+                </Row>
+              </Card>
+
+              {/* 购物车统计信息 */}
+              <Card size="small" style={{ marginBottom: 16 }}>
+                <Title level={5} style={{ marginBottom: 16 }}>
+                  <ShoppingCartOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+                  购物车统计
+                </Title>
+                <Row gutter={16}>
+                  <Col span={6}>
+                    <Statistic
+                      title="购物车ID"
+                      value={record.id}
+                      prefix={<ShoppingCartOutlined />}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Statistic
+                      title="商品种类"
+                      value={record.statistics.total_items}
+                      prefix={<ShoppingOutlined />}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Statistic
+                      title="商品总数量"
+                      value={record.statistics.total_quantity}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Statistic
+                      title="总价值"
+                      value={record.statistics.total_value}
+                      precision={2}
+                      prefix="¥"
+                      valueStyle={{ color: '#e74c3c' }}
+                    />
+                  </Col>
+                </Row>
+              </Card>
+
+              {/* 商品列表 */}
+              <Card size="small">
+                <Title level={5} style={{ marginBottom: 16 }}>
+                  <ShoppingOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                  商品列表 ({record.items.length} 件商品)
+                </Title>
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  {record.items.map((item, index) => {
+                    const product = item.product;
+                    const media = product?.media?.[0];
+                    const subtotal = item.quantity * product.price;
+                    
+                    return (
+                      <Card
+                        key={index}
+                        size="small"
+                        style={{ 
+                          marginBottom: 12, 
+                          border: '1px solid #f0f0f0',
+                          borderRadius: '8px',
+                          transition: 'all 0.3s ease'
+                        }}
+                        bodyStyle={{ padding: '12px' }}
+                        hoverable
+                      >
+                        <Row gutter={12} align="middle">
+                          <Col>
+                            {media ? (
+                              <img
+                                src={media.cdn_url || media.local_path}
+                                alt={product.name}
+                                style={{
+                                  width: 60,
+                                  height: 60,
+                                  objectFit: 'cover',
+                                  borderRadius: '6px',
+                                  border: '1px solid #f0f0f0'
+                                }}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  width: 60,
+                                  height: 60,
+                                  backgroundColor: '#f5f5f5',
+                                  borderRadius: '6px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: '#999'
+                                }}
+                              >
+                                无图片
+                              </div>
+                            )}
+                          </Col>
+                          <Col flex={1}>
+                            <div style={{ marginBottom: 8 }}>
+                              <Title level={5} style={{ margin: 0, fontSize: '14px' }}>
+                                {product.name}
+                              </Title>
+                              <Text type="secondary" style={{ fontSize: '12px' }}>
+                                SKU: {product.sku || '-'}
+                              </Text>
+                            </div>
+                            <Row gutter={8}>
+                              <Col>
+                                <Tag color="blue">数量: {item.quantity}</Tag>
+                              </Col>
+                              <Col>
+                                <Tag color="green">单价: ¥{product.price}</Tag>
+                              </Col>
+                              <Col>
+                                <Tag color="red">小计: ¥{subtotal.toFixed(2)}</Tag>
+                              </Col>
+                            </Row>
+                            <div style={{ marginTop: 4 }}>
+                              <Text type="secondary" style={{ fontSize: '11px' }}>
+                                库存: {product.stock} 件 | 状态: 
+                                <Tag 
+                                  color={product.status === 'ACTIVE' ? 'green' : 'red'} 
+                                  style={{ marginLeft: 4 }}
+                                >
+                                  {product.status === 'ACTIVE' ? '正常' : '已下架'}
+                                </Tag>
+                              </Text>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </Card>
+            </div>
+          )
+        });
+        break;
+    }
   };
 
-  // 统计面板
-  const StatsPanel = () => (
-    <Row gutter={16} style={{ marginBottom: 16 }}>
-      <Col span={6}>
-        <Card>
-          <Statistic
-            title="商品总数"
-            value={itemCount}
-            prefix={<ShoppingCartOutlined />}
-            valueStyle={{ color: '#1890ff' }}
-          />
-        </Card>
-      </Col>
-      <Col span={6}>
-        <Card>
-          <Statistic
-            title="商品种类"
-            value={cartData?.items?.length || 0}
-            valueStyle={{ color: '#52c41a' }}
-          />
-        </Card>
-      </Col>
-      <Col span={6}>
-        <Card>
-          <Statistic
-            title="总金额"
-            value={calculateTotal()}
-            precision={2}
-            prefix="¥"
-            valueStyle={{ color: '#e74c3c' }}
-          />
-        </Card>
-      </Col>
-      <Col span={6}>
-        <Card>
-          <div style={{ textAlign: 'center' }}>
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={clearCart}
-              disabled={!cartData?.items?.length}
-            >
-              清空购物车
-            </Button>
-          </div>
-        </Card>
-      </Col>
-    </Row>
-  );
-
   return (
-    <div>
-      <StatsPanel />
-      
-      <ProTable
-        columns={columns}
-        dataSource={cartData?.items || []}
-        request={API.cart.cartControllerGetCart}
-        pagination={false}
-        rowKey="id"
-        scroll={{ x: 800 }}
-        locale={{
-          emptyText: '购物车为空',
-        }}
-      />
-    </div>
+    <ProTable
+      columns={columns}
+      actions={actions}
+      request={API.adminCart.adminCartControllerGetAllCarts}
+      rowKey="id"
+      handleAction={handleAction}
+    />
   );
 }

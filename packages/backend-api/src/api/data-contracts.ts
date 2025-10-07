@@ -27,41 +27,6 @@ export interface MessageDto {
 
 export type DefaultModel = object;
 
-export interface MediaUploadDto {
-  /** 业务类型 */
-  business_type: MediaUploadDtoBusinessTypeEnum;
-  /** 关联的业务ID */
-  business_id?: number;
-  /** 媒体类型 */
-  type: MediaUploadDtoTypeEnum;
-  /** 替代文本 */
-  alt_text?: string;
-  /**
-   * 排序权重
-   * @default 0
-   */
-  sort_order?: number;
-  /**
-   * 媒体分类
-   * @default "DEFAULT"
-   */
-  category?: string;
-}
-
-export interface MediaBatchUploadDto {
-  /** 业务类型 */
-  business_type: MediaBatchUploadDtoBusinessTypeEnum;
-  /** 关联的业务ID */
-  business_id?: number;
-  /** 媒体类型 */
-  type: MediaBatchUploadDtoTypeEnum;
-  /**
-   * 媒体分类
-   * @default "DEFAULT"
-   */
-  category?: string;
-}
-
 export interface PaginatedDto {
   /**
    * 响应状态码
@@ -236,6 +201,48 @@ export interface ProductCreateDto {
 }
 
 export interface ProductUpdateDto {
+  /** 商品名称 */
+  name?: string;
+  /** 商品详细描述 */
+  description?: string;
+  /** 商品简短描述 */
+  short_desc?: string;
+  /** 商品价格 */
+  price?: number;
+  /** 商品原价 */
+  original_price?: number;
+  /** 商品库存 */
+  stock?: number;
+  /**
+   * 最小库存预警
+   * @default 0
+   */
+  min_stock?: number;
+  /** 商品重量(kg) */
+  weight?: number;
+  /** 商品尺寸信息 */
+  dimensions?: ProductDimensionsDto;
+  /** SKU编码 */
+  sku?: string;
+  /** 条形码 */
+  barcode?: string;
+  /** 商品状态 */
+  status?: ProductUpdateDtoStatusEnum;
+  /** 分类ID */
+  category_id?: number;
+  /**
+   * 排序权重
+   * @default 0
+   */
+  sort_order?: number;
+  /** SEO标题 */
+  seo_title?: string;
+  /** SEO描述 */
+  seo_description?: string;
+  /** SEO关键词 */
+  seo_keywords?: string[];
+  /** 商品属性 */
+  attributes?: ProductAttributeDto[];
   /** 商品ID */
   id: number;
 }
@@ -276,6 +283,14 @@ export interface ProductMediaUploadDto {
   alt_text?: string;
 }
 
+export interface ProductMediaBatchUploadOrderDto {
+  /**
+   * 媒体文件
+   * @format binary
+   */
+  files: File;
+}
+
 export interface ProductMediaUpdateDto {
   /** 媒体ID */
   id: number;
@@ -290,6 +305,50 @@ export interface ProductMediaUpdateDto {
 export interface ProductMediaDeleteDto {
   /** 媒体ID */
   id: number;
+}
+
+export interface ArrayDto {
+  /**
+   * 响应状态码
+   * @example 0
+   */
+  code: number;
+  /**
+   * 响应消息
+   * @example "success"
+   */
+  message: string;
+  /** 数组数据 */
+  data: any[];
+}
+
+export interface CategoryItemDto {
+  /** 分类ID */
+  id: number;
+  /** 分类名称 */
+  name: string;
+  /** URL友好标识 */
+  slug: string;
+  /** 分类描述 */
+  description?: string;
+  /** 分类图片URL */
+  image_url?: string;
+  /** 父分类ID */
+  parent_id?: number;
+  /** 排序权重 */
+  sort_order: number;
+  /** 是否启用 */
+  is_active: boolean;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * 更新时间
+   * @format date-time
+   */
+  updated_at: string;
 }
 
 export interface CategoryCreateDto {
@@ -316,6 +375,26 @@ export interface CategoryCreateDto {
 }
 
 export interface CategoryUpdateDto {
+  /** 分类名称 */
+  name?: string;
+  /** URL友好标识 */
+  slug?: string;
+  /** 分类描述 */
+  description?: string;
+  /** 分类图片URL */
+  image_url?: string;
+  /** 父分类ID */
+  parent_id?: number;
+  /**
+   * 排序权重
+   * @default 0
+   */
+  sort_order?: number;
+  /**
+   * 是否启用
+   * @default true
+   */
+  is_active?: boolean;
   /** 分类ID */
   id: number;
 }
@@ -1258,6 +1337,133 @@ export interface CartValidationResponseDto {
   invalidItems: any[];
 }
 
+export interface AdminCartItemDto {
+  /**
+   * 购物车项ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 购物车ID
+   * @example 1
+   */
+  cart_id: number;
+  /**
+   * 商品ID
+   * @example 1
+   */
+  product_id: number;
+  /**
+   * 商品数量
+   * @example 2
+   */
+  quantity: number;
+  /**
+   * 创建时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  created_at: string;
+  /**
+   * 更新时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  updated_at: string;
+  /** 商品信息 */
+  product: object;
+  /** 用户信息 */
+  cart: object;
+}
+
+export interface AdminCartResponseDto {
+  /**
+   * 购物车ID
+   * @example 1
+   */
+  id: number;
+  /**
+   * 用户ID
+   * @example 1
+   */
+  user_id: number;
+  /**
+   * 创建时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  created_at: string;
+  /**
+   * 更新时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  updated_at: string;
+  /** 购物车项列表 */
+  items: AdminCartItemDto[];
+  /** 用户信息 */
+  user: object;
+  /** 购物车统计 */
+  statistics: object;
+}
+
+export interface AdminCartStatisticsDto {
+  /**
+   * 总购物车数量
+   * @example 100
+   */
+  total_carts: number;
+  /**
+   * 总购物车项数量
+   * @example 500
+   */
+  total_cart_items: number;
+  /**
+   * 活跃购物车数量（有商品的购物车）
+   * @example 80
+   */
+  active_carts: number;
+  /**
+   * 总商品价值
+   * @example 50000
+   */
+  total_value: number;
+  /**
+   * 平均购物车价值
+   * @example 500
+   */
+  average_cart_value: number;
+  /**
+   * 最多商品的购物车
+   * @example 15
+   */
+  max_items_in_cart: number;
+  /**
+   * 统计时间
+   * @format date-time
+   * @example "2024-01-01T10:00:00Z"
+   */
+  generated_at: string;
+}
+
+export interface AdminBatchCartOperationDto {
+  /**
+   * 操作类型
+   * @example "delete"
+   */
+  operation: AdminBatchCartOperationDtoOperationEnum;
+  /**
+   * 购物车项ID列表
+   * @example [1,2,3]
+   */
+  cart_item_ids: string[];
+  /**
+   * 新数量（仅update_quantity操作需要）
+   * @example 5
+   */
+  new_quantity?: number;
+}
+
 export interface PaymentLogDto {
   /**
    * 支付日志ID
@@ -1490,36 +1696,6 @@ export interface PaymentDetailDto {
   admin: AdminInfoDto;
 }
 
-/** 业务类型 */
-export enum MediaUploadDtoBusinessTypeEnum {
-  PRODUCT = "PRODUCT",
-  BLOG = "BLOG",
-  REVIEW = "REVIEW",
-  USER = "USER",
-  GENERAL = "GENERAL",
-}
-
-/** 媒体类型 */
-export enum MediaUploadDtoTypeEnum {
-  IMAGE = "IMAGE",
-  VIDEO = "VIDEO",
-}
-
-/** 业务类型 */
-export enum MediaBatchUploadDtoBusinessTypeEnum {
-  PRODUCT = "PRODUCT",
-  BLOG = "BLOG",
-  REVIEW = "REVIEW",
-  USER = "USER",
-  GENERAL = "GENERAL",
-}
-
-/** 媒体类型 */
-export enum MediaBatchUploadDtoTypeEnum {
-  IMAGE = "IMAGE",
-  VIDEO = "VIDEO",
-}
-
 /** 价格排序 */
 export enum ProductListDtoPriceOrderEnum {
   Asc = "asc",
@@ -1547,6 +1723,13 @@ export enum ProductListDtoStatusEnum {
 
 /** 商品状态 */
 export enum ProductCreateDtoStatusEnum {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  DRAFT = "DRAFT",
+}
+
+/** 商品状态 */
+export enum ProductUpdateDtoStatusEnum {
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
   DRAFT = "DRAFT",
@@ -1690,6 +1873,15 @@ export enum ConfirmPaymentDtoPaymentMethodEnum {
 }
 
 /**
+ * 操作类型
+ * @example "delete"
+ */
+export enum AdminBatchCartOperationDtoOperationEnum {
+  Delete = "delete",
+  UpdateQuantity = "update_quantity",
+}
+
+/**
  * 支付方式
  * @example "BANK_TRANSFER"
  */
@@ -1739,35 +1931,6 @@ export type MediaControllerBatchUploadMediaData = MessageDto & {
   data?: object;
 };
 
-export interface MediaControllerGetMediaListParams {
-  /**
-   * 页码
-   * @default 1
-   */
-  page?: number;
-  /**
-   * 每页数量
-   * @default 20
-   */
-  page_size?: number;
-  /** 业务类型 */
-  business_type?: string;
-  /** 关联的业务ID */
-  business_id?: number;
-  /** 媒体类型 */
-  type?: TypeEnum;
-  /** 媒体分类 */
-  category?: string;
-  /** 用户ID */
-  user_id?: number;
-}
-
-/** 媒体类型 */
-export enum TypeEnum {
-  IMAGE = "IMAGE",
-  VIDEO = "VIDEO",
-}
-
 export type MediaControllerGetMediaListData = PaginatedDto & {
   /** @example 0 */
   code?: number;
@@ -1780,12 +1943,6 @@ export type MediaControllerGetMediaListData = PaginatedDto & {
     page_size?: number;
   };
 };
-
-/** 媒体类型 */
-export enum MediaControllerGetMediaListParams1TypeEnum {
-  IMAGE = "IMAGE",
-  VIDEO = "VIDEO",
-}
 
 export type MediaControllerUpdateMediaData = MessageDto & {
   data?: object;
@@ -1939,28 +2096,22 @@ export type ProductControllerGetProductMediaListData = any;
 
 export type ProductControllerGetProductMediaByIdData = any;
 
-export type ProductControllerSetProductMainImageData = any;
-
 export type ProductControllerGetProductMediaStatsData = any;
 
 export interface ProductControllerGetCategoryListParams {
-  /**
-   * 页码
-   * @default 1
-   */
-  page?: number;
-  /**
-   * 每页条数
-   * @default 20
-   */
-  page_size?: number;
   /** 父分类ID */
   parent_id?: number;
   /** 是否启用 */
   is_active?: boolean;
 }
 
-export type ProductControllerGetCategoryListData = any;
+export type ProductControllerGetCategoryListData = ArrayDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: CategoryItemDto[];
+};
 
 export type ProductControllerCreateCategoryData = any;
 
@@ -2733,6 +2884,132 @@ export type CartControllerValidateCartItemsData = MessageDto & {
   data?: CartValidationResponseDto;
 };
 
+export interface AdminCartControllerGetAllCartsParams {
+  /**
+   * 用户ID
+   * @example 1
+   */
+  user_id?: number;
+  /**
+   * 用户邮箱
+   * @example "user@example.com"
+   */
+  user_email?: string;
+  /**
+   * 商品ID
+   * @example 1
+   */
+  product_id?: number;
+  /**
+   * 商品名称
+   * @example "商品名称"
+   */
+  product_name?: string;
+  /**
+   * 最小数量
+   * @example 1
+   */
+  min_quantity?: number;
+  /**
+   * 最大数量
+   * @example 10
+   */
+  max_quantity?: number;
+  /**
+   * 创建时间开始
+   * @example "2024-01-01T00:00:00Z"
+   */
+  created_at_start?: string;
+  /**
+   * 创建时间结束
+   * @example "2024-12-31T23:59:59Z"
+   */
+  created_at_end?: string;
+  /**
+   * 更新时间开始
+   * @example "2024-01-01T00:00:00Z"
+   */
+  updated_at_start?: string;
+  /**
+   * 更新时间结束
+   * @example "2024-12-31T23:59:59Z"
+   */
+  updated_at_end?: string;
+  /**
+   * 页码
+   * @default 1
+   * @example 1
+   */
+  page?: number;
+  /**
+   * 每页数量
+   * @default 10
+   * @example 10
+   */
+  page_size?: number;
+  /**
+   * 排序字段
+   * @example "created_at"
+   */
+  sort_by?: string;
+  /**
+   * 排序方向
+   * @example "desc"
+   */
+  sort_order?: SortOrderEnum3;
+}
+
+/**
+ * 排序方向
+ * @example "desc"
+ */
+export enum SortOrderEnum3 {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+export type AdminCartControllerGetAllCartsData = PaginatedDto & {
+  /** @example 0 */
+  code?: number;
+  /** @example "请求成功" */
+  message?: string;
+  data?: {
+    records?: AdminCartResponseDto[];
+    total?: number;
+    page?: number;
+    page_size?: number;
+  };
+};
+
+/**
+ * 排序方向
+ * @example "desc"
+ */
+export enum AdminCartControllerGetAllCartsParams1SortOrderEnum {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+export type AdminCartControllerGetCartStatisticsData = MessageDto & {
+  data?: AdminCartStatisticsDto;
+};
+
+export type AdminCartControllerGetCartByUserIdData = MessageDto & {
+  data?: AdminCartResponseDto;
+};
+
+export type AdminCartControllerDeleteCartByUserIdData = MessageDto & {
+  data?: object;
+};
+
+export type AdminCartControllerBatchOperationCartItemsData = MessageDto & {
+  data?: object;
+};
+
+export type AdminCartControllerClearAllCartsData = MessageDto & {
+  data?: object;
+};
+
 export type AddressControllerGetCountriesData = MessageDto & {
   data?: object;
 };
@@ -2807,7 +3084,7 @@ export interface PaymentControllerGetPaymentListParams {
    * 排序方向
    * @example "desc"
    */
-  sort_order?: SortOrderEnum3;
+  sort_order?: SortOrderEnum4;
 }
 
 /**
@@ -2853,7 +3130,7 @@ export enum SortByEnum3 {
  * 排序方向
  * @example "desc"
  */
-export enum SortOrderEnum3 {
+export enum SortOrderEnum4 {
   Asc = "asc",
   Desc = "desc",
 }

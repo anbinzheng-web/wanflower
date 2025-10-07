@@ -39,13 +39,13 @@ import {
   ProductControllerGetProductMediaListData,
   ProductControllerGetProductMediaStatsData,
   ProductControllerIncrementProductViewData,
-  ProductControllerSetProductMainImageData,
   ProductControllerUpdateCategoryData,
   ProductControllerUpdateProductAttributeData,
   ProductControllerUpdateProductData,
   ProductControllerUpdateProductMediaData,
   ProductControllerUploadProductMediaData,
   ProductCreateDto,
+  ProductMediaBatchUploadOrderDto,
   ProductMediaDeleteDto,
   ProductMediaUpdateDto,
   ProductMediaUploadDto,
@@ -286,19 +286,22 @@ export class ProductApi<SecurityDataType = unknown> {
    * @tags product
    * @name ProductControllerBatchUploadProductMedia
    * @summary 批量上传产品媒体文件
-   * @request POST:/api/product/media/batch-upload/{productId}
+   * @request POST:/api/product/media/batch-upload
    * @secure
    * @response `201` `ProductControllerBatchUploadProductMediaData` 上传成功
+   * @response `400` `void` 文件格式或大小不符合要求
    * @response `403` `void` 权限不足
    */
   productControllerBatchUploadProductMedia = (
-    productId: number,
+    data: ProductMediaBatchUploadOrderDto,
     params: RequestParams = {},
   ) =>
     this.http.request<ProductControllerBatchUploadProductMediaData, void>({
-      path: `/api/product/media/batch-upload/${productId}`,
+      path: `/api/product/media/batch-upload`,
       method: "POST",
+      body: data,
       secure: true,
+      type: ContentType.FormData,
       ...params,
     });
   /**
@@ -394,27 +397,6 @@ export class ProductApi<SecurityDataType = unknown> {
    * @description 使用统一媒体管理系统，需要员工或管理员权限
    *
    * @tags product
-   * @name ProductControllerSetProductMainImage
-   * @summary 设置产品主图
-   * @request POST:/api/product/media/set-main/{productId}/{mediaId}
-   * @secure
-   * @response `200` `ProductControllerSetProductMainImageData` 设置成功
-   */
-  productControllerSetProductMainImage = (
-    productId: number,
-    mediaId: number,
-    params: RequestParams = {},
-  ) =>
-    this.http.request<ProductControllerSetProductMainImageData, any>({
-      path: `/api/product/media/set-main/${productId}/${mediaId}`,
-      method: "POST",
-      secure: true,
-      ...params,
-    });
-  /**
-   * @description 使用统一媒体管理系统，需要员工或管理员权限
-   *
-   * @tags product
    * @name ProductControllerGetProductMediaStats
    * @summary 获取产品媒体统计
    * @request GET:/api/product/media/stats/{productId}
@@ -438,7 +420,7 @@ export class ProductApi<SecurityDataType = unknown> {
    * @name ProductControllerGetCategoryList
    * @summary 获取产品分类列表
    * @request GET:/api/product/category/list
-   * @response `200` `ProductControllerGetCategoryListData` 获取成功
+   * @response `200` `ProductControllerGetCategoryListData`
    */
   productControllerGetCategoryList = (
     query: ProductControllerGetCategoryListParams,
@@ -448,6 +430,7 @@ export class ProductApi<SecurityDataType = unknown> {
       path: `/api/product/category/list`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**

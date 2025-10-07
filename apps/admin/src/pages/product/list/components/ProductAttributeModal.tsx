@@ -128,20 +128,10 @@ const ProductAttributeModal = ({ productId, productName, callback }: ProductAttr
       actions={attributeActions}
       handleAction={handleAttributeAction}
       request={async (params) => {
-        const res = await API.product.productControllerGetProductAttributes({ 
+        return await API.product.productControllerGetProductAttributes({ 
           ...params,
           product_id: productId 
         });
-        return {
-          code: 0,
-          message: 'success',
-          data: {
-            records: res.data,
-            total: 0,
-            page: 1,
-            page_size: 20
-          }
-        }
       }}
       pagination={false}
       ref={attributeTableRef}

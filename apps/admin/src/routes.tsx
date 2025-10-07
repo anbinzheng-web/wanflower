@@ -44,28 +44,6 @@ export const routes: IRoute[] = [
     ]
   },
   {
-    name: '博客管理',
-    key: 'blog',
-    icon: <FileTextOutlined />,
-    children: [
-      {
-        name: '博客文章',
-        key: 'blog/list',
-        icon: <FileTextOutlined />
-      },
-      {
-        name: '标签管理',
-        key: 'blog/tags',
-        icon: <TagsOutlined />
-      },
-      {
-        name: '分类管理',
-        key: 'blog/categories',
-        icon: <UnorderedListOutlined />
-      }
-    ]
-  },
-  {
     name: '订单管理',
     key: 'order',
     icon: <ShoppingOutlined />,
@@ -98,6 +76,28 @@ export const routes: IRoute[] = [
     name: '媒体管理',
     key: 'media',
     icon: <PictureOutlined />
+  },
+  {
+    name: '博客管理',
+    key: 'blog',
+    icon: <FileTextOutlined />,
+    children: [
+      {
+        name: '博客文章',
+        key: 'blog/list',
+        icon: <FileTextOutlined />
+      },
+      {
+        name: '标签管理',
+        key: 'blog/tags',
+        icon: <TagsOutlined />
+      },
+      {
+        name: '分类管理',
+        key: 'blog/categories',
+        icon: <UnorderedListOutlined />
+      }
+    ]
   },
   {
     name: '用户管理',
