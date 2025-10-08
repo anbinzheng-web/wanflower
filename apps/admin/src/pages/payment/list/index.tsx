@@ -283,13 +283,13 @@ export default function PaymentList() {
       name: 'view',
       icon: <EyeOutlined />,
     },
-    {
-      name: 'delete',
-      icon: <DeleteOutlined />,
-      text: '删除',
-      danger: true,
-      collapsed: true
-    }
+    // {
+    //   name: 'delete',
+    //   icon: <DeleteOutlined />,
+    //   text: '删除',
+    //   danger: true,
+    //   collapsed: true
+    // }
   ];
 
   useEffect(() => {

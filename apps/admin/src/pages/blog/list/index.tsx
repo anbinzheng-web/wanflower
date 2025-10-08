@@ -524,17 +524,20 @@ export default function() {
     {
       name: 'view',
       icon: <EyeOutlined />,
-      text: '预览'
+      text: '预览',
+      collapsed: true
     },
     {
       name: 'edit',
       icon: <EditOutlined />,
-      text: '编辑'
+      text: '编辑',
+      collapsed: true
     },
     {
       name: 'media',
       icon: <PictureOutlined />,
-      text: '媒体管理'
+      text: '媒体管理',
+      collapsed: true
     },
     {
       name: 'delete',
@@ -673,20 +676,14 @@ export default function() {
   };
 
   return (
-    <div>
-      <ProTable
-        columns={columns}
-        request={API.blog.blogControllerList}
-        actions={actions}
-        handleAction={handleAction}
-        toolBar={
-          <Space>
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-              创建博客
-            </Button>
-          </Space>
-        }
-      />
-    </div>
+    <ProTable
+      columns={columns}
+      request={API.blog.blogControllerList}
+      actions={actions}
+      handleAction={handleAction}
+      toolBar={<Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+        创建博客
+      </Button>}
+    />
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { ProTable, defineColumns, defineActions, ProTableRef } from '@/components/ProTable';
-import { Button, Space, Image, Upload, Select, Tag, message } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Image, Upload, Tag } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import { API } from '@/api';
 import type { UploadFile } from 'antd';
 import { Video } from '@/components/Video';
@@ -164,12 +164,14 @@ const mediaActions = defineActions([
   {
     name: 'edit',
     icon: <EditOutlined />,
-    text: '编辑'
+    text: '编辑',
+    collapsed: true
   },
   {
     name: 'download',
     icon: <DownloadOutlined />,
-    text: '下载'
+    text: '下载',
+    collapsed: true
   },
   {
     name: 'delete',
@@ -275,78 +277,28 @@ export default function MediaManagement() {
     }
   }, []);
 
-  // 处理批量上传
-  const handleBatchUpload = useCallback(async (fileList: UploadFile[]) => {
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      fileList.forEach(file => {
-        formData.append('files', file as any);
-      });
-      formData.append('business_type', 'GENERAL');
-      formData.append('type', 'IMAGE');
-
-      const res = await API.media.mediaControllerBatchUploadMedia(formData as any);
-      if (res.code === 0) {
-        $message.success('批量上传成功');
-        tableRef.current?.refresh();
-      } else {
-        $message.error(res.message);
-      }
-    } catch (error) {
-      $message.error('批量上传失败');
-    } finally {
-      setUploading(false);
-    }
-  }, []);
-
   return (
-    <div className="p-6">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold">媒体管理</h1>
-        <p className="text-gray-600">管理所有类型的媒体文件</p>
-      </div>
-
-      <ProTable
-        columns={mediaColumns}
-        actions={mediaActions}
-        handleAction={handleMediaAction}
-        request={(params) => API.media.mediaControllerGetMediaList(params)}
-        ref={tableRef}
-        toolBar={
-          <Space>
-            <Upload
-              beforeUpload={handleUpload}
-              showUploadList={false}
-              accept="image/*,video/*"
-              disabled={uploading}
-            >
-              <Button 
-                type="primary" 
-                icon={<UploadOutlined />}
-                loading={uploading}
-              >
-                上传文件
-              </Button>
-            </Upload>
-            <Upload
-              beforeUpload={() => false}
-              onChange={({ fileList }) => handleBatchUpload(fileList)}
-              multiple
-              accept="image/*"
-              showUploadList={false}
-              disabled={uploading}
-            >
-              <Button 
-                icon={<PlusOutlined />}
-                loading={uploading}
-              >
-                批量上传
-              </Button>
-            </Upload>
-          </Space>
-        }
-      />
-    </div>
+    <ProTable
+      columns={mediaColumns}
+      actions={mediaActions}
+      handleAction={handleMediaAction}
+      request={API.media.mediaControllerGetMediaList}
+      ref={tableRef}
+      toolBar={<Upload
+        beforeUpload={handleUpload}
+        showUploadList={false}
+        accept="image/*,video/*"
+        disabled={uploading}
+        multiple
+      >
+        <Button 
+          type="primary" 
+          icon={<UploadOutlined />}
+          loading={uploading}
+        >
+          上传文件
+        </Button>
+      </Upload>}
+    />
   );
 }

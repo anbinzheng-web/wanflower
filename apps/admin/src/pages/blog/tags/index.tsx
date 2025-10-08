@@ -106,7 +106,8 @@ export default function() {
     {
       name: 'edit',
       icon: <EditOutlined />,
-      text: '编辑'
+      text: '编辑',
+      collapsed: true
     },
     {
       name: 'delete',

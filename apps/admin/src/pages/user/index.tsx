@@ -100,12 +100,7 @@ export default function User() {
     {
       name: 'edit',
       icon: <EditOutlined />,
-    },
-    {
-      name: 'delete',
-      icon: <DeleteOutlined />,
-      text: '删除',
-      danger: true,
+      text: '编辑',
       collapsed: true
     },
     {
@@ -126,7 +121,14 @@ export default function User() {
       icon: <StopOutlined />,
       text: '切换状态',
       collapsed: true
-    }
+    },
+    {
+      name: 'delete',
+      icon: <DeleteOutlined />,
+      text: '删除',
+      danger: true,
+      collapsed: true
+    },
   ]
 
   const handleAction = async (name, record) => {
